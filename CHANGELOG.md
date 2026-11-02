@@ -1,0 +1,52 @@
+# Changelog
+
+- 2025-12-10: added: sort, filter v1.3.4
+- 2025-12-12: added: dockerfile v1.3.5
+- 2025-12-15: added: add lunar date tooltip v1.3.6
+- 2025-12-15: modified: modify lunar show logic v1.3.7
+- 2025-12-15: added: add next due preview v1.3.8
+- 2025-12-16: added: add webhook channels v1.3.9
+- 2025-12-16: added: add github actions deploy v1.4.0
+- 2025-12-16: modified: mobile layout v1.4.1
+- 2025-12-25: modified: add gotify/ntfy channels and refactor setup page v1.4.2
+- 2025-12-25: modified: fix previewDate logic v1.4.3
+- 2026-01-05: added: add billing management v2.0.0
+- 2026-01-05: modified: fix manual renew v2.0.1
+- 2026-01-05: added: add manual renew history v2.0.2
+- 2026-01-05: modified: fix renewDialogVisible logic v2.0.3
+- 2026-01-05: added: add exchange rate v2.0.4
+- 2026-01-06: modified: add cache optimize exchange rate logic v2.0.5
+- 2026-01-06: added: add total amount display v2.0.6
+- 2026-01-06: added: add filter logic v2.0.7
+- 2026-01-06: added: add spending stats v2.0.8
+- 2026-01-06: modified: fix spending stats logic v2.0.9
+- 2026-01-07: added: add avg monthly label v2.0.10
+- 2026-01-07: added: add monthly breakdown v2.0.11
+- 2026-01-07: modified: fix spending stats logic v2.0.12
+- 2026-01-07: added: add upcoming bills total v2.0.13
+- 2026-01-07: added: add upcoming bills days config v2.0.14
+- 2026-01-07: added: add icon and custom push title config v2.0.15
+- 2026-01-08: modified: fix filter logic v2.0.16
+- 2026-01-08: modified: fix spending stats UI logic v2.0.17
+- 2026-01-08: modified: fix UI bugs, infinite loop risk, update docs v2.0.18
+- 2026-01-08: hotfix: emergency fix v2.0.19
+- 2026-01-09: added: exchange rate proxy, kv cache, auto-sync workflow, watchtower support v2.0.20
+- 2026-02-01: added: add telegram proxy for china mainland; improved: migration confirmation dialog & ui layoutcompact; fixed: sort icon issue v2.2.7
+- 2026-02-02: modified: rebuild the entire project with a separated frontend & backend, using on-demand inline builds v3.0.1 
+- 2026-02-04: improved: refactor build config, fix notification migration check, optimize exchange rate fallback & UI v3.0.22
+- 2026-02-04: improved: optimize exchange rate UI with icon & tooltip v3.0.24
+- 2026-02-04: fixed: force icon colors for exchange rate status v3.0.26
+- 2026-02-05: improved: dual-mode build (inline/cdn) with local fonts; fixed: ghcr deploy actions; fixed: bill projection logic for short cycles v3.0.37
+- 2026-02-06: fixed: ntfy migration check topic value not token v3.0.28
+- 2026-02-10: security: backup api key & anti-brute-force; ui: move backup key input to data tab (card style) v3.1.6
+- 2026-02-11: added: serverchan3 & dingtalk (webhook/sign) channels; improved: new icons & ui optimization v3.2.8 
+- 2026-02-11: fixed: http context uuid generation; docs: add backup api, dingtalk & serverchan3 usage v3.2.9
+- 2026-02-12: added: lark(feishu) & wecom(work wechat) channels (token/secret simplification); improved: bilingual channel names & tags; docs: https requirement for docker v3.3.7
+- 2026-02-12: fixed: mobile layout overflow in settings dialog; improved: smart collapse & clearable for select components; added: random generate & copy buttons for backup key v3.3.24
+- 2026-02-14: security: fix timing attack vulnerability in backup api; audit: code security review completed v3.3.26
+- 2026-02-21: feature: introduce RRULE-based natural recurrence engine (Fixed Repeat Mode); add future 3 times preview calculations; improve: fix element-plus allow-create type mismatch, negative number backwards offset logic, fix mode layout shifting v3.4.13
+- 2026-02-24: feature: multi-select notification times with backward-compatible dual-field storage (notifyTime/notifyTimes); improve: repeat mode month selector shows full bilingual month names, RRULE description uses abbreviated month names (Jan~Dec), ICS calendar description for repeat events shows rule text instead of intervalDays; fix: calcNextRepeatDate returns null instead of +1 day fallback on no match, add orange "no matching dates" warning in repeat preview v3.5.1
+- 2026-02-26: fix: resolve recurrence engine skips (e.g. Day 3 missing) by standardizing UTC Date manipulation without +1 day offset; sync backend calcNextRepeatDate to support 'bycycleday'; fix: shift repeatUpcomingDates pointer to include base day (Day 1) in UI preview; fix: addHistory shifts calcNextRepeatDate origin correctly using createDate; fix: fix template white-space prefix indent in preview list using v-text; feature: add showProjected switch in calendar view to hide predicted dots and charts syncing; v3.5.42
+- 2026-02-28: feature: add batch operations (delete, pause, assign channels); improve: add fade-in transition for view switching, swap Dashboard and Calendar tab positions; fix: table checkbox selection lost when switching views, fix calendar `showProjected` toggle color to default blue, align calendar `today` card height with other days v3.6.16
+- 2026-03-02: fixed: target date calculation bug caused by missing type === 'repeat' validation in backend; fixed: mobile layout overflow for batch operation bar; fixed: mobile layout overflow for batch assign channels dialogs v3.6.18
+- 2026-03-09: feature: add optional renew URL field to services with "Go to Renew" button in renew dialog; fixed: calendar view showing 366 duplicate events for repeat-type services caused by non-advancing cursor loop; fixed: 20 timezone inconsistencies across frontend & backend — unified all date calculation to UTC, all user-facing display to preferred timezone (Intl.DateTimeFormat); security: enforce http/https whitelist for renew URLs on frontend & backend, block dangerous schemes via API validation, add noopener on window.open; security: backend RRULE null-safety with input sanitization, NaN guard, and three-tier fallback (calcNextRepeatDate → repeatFallbackAdvance → today anchor) v3.7.3

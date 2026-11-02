@@ -1,0 +1,29 @@
+services:
+  renewhelper:
+    image: ieax/renewhelper:latest
+    container_name: renewhelper
+    restart: unless-stopped
+    ports:
+      - "9787:9787"
+    volumes:
+      - ./data:/data
+    environment:
+      # 1. 设置登录密码/ Setup your password
+      - AUTH_PASSWORD=admin
+      
+      # 2. 设置 Cron 定时任务,不要修改！ / Setup Cron trigger DON'T CHANGE IT!
+      - CRON_SCHEDULE=0,30 * * * *
+      
+      # 3. 容器时区 (影响日志和本地时间计算)/ Setup your TIMEZONE
+      - TZ=Asia/Shanghai
+
+  # 若需自动更新保留以下watchtower配置 / Keep these for auto update
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 86400 --cleanup
+    environment:
+      - TZ=Asia/Shanghai

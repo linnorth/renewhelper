@@ -1,0 +1,10 @@
+# 替换为你自己的域名
+your-domain.com {
+    # 开启 gzip 压缩，加快加载速度
+    encode gzip
+
+    # 反向代理设置
+    # 'renew-helper' 是 docker-compose 中的服务名，Docker会自动解析内部IP
+    # '9787' 是容器内部的端口 (Dockerfile EXPOSE 的端口)
+    reverse_proxy renew-helper:9787
+}

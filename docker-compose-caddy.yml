@@ -1,0 +1,43 @@
+services:
+  renew-helper:
+    image: ieax/renewhelper:latest
+    container_name: renew-helper
+    restart: unless-stopped
+    # 移除 ports 映射，只暴露端口给 Caddy，更安全 / For security purposes, only expose ports to Caddy.
+    expose:
+      - "9787"
+    volumes:
+      - ./data:/data
+    environment:
+      - AUTH_PASSWORD=admin
+      - CRON_SCHEDULE=0,30 * * * *
+      - TZ=Asia/Shanghai
+
+  caddy:
+    image: caddy:alpine
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"   # HTTP
+      - "443:443" # HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - renew-helper
+
+  # 若需自动更新保留以下watchtower配置 / Keep these for auto update
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 86400 --cleanup
+    environment:
+      - TZ=Asia/Shanghai
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,12 @@
+{
+  "name": "renew-helper-docker",
+  "version": "3.8.4",
+  "type": "module",
+  "scripts": {
+    "start": "node docker-runner.js"
+  },
+  "dependencies": {
+    "miniflare": "^3.20231030.0",
+    "node-cron": "^3.0.3"
+  }
+}

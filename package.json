@@ -1,0 +1,45 @@
+{
+  "name": "renewhelper",
+  "version": "3.8.4",
+  "description": "A serverless service lifecycle manager on Cloudflare Workers",
+  "main": "_worker.js",
+  "keywords": [
+    "cloudflare-workers",
+    "renew",
+    "subscribe",
+    "notify",
+    "icalendar"
+  ],
+  "author": "LOSTFREE",
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "build:cdn": "node scripts/build.js --cdn",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ieax/renewhelper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ieax/renewhelper/issues"
+  },
+  "homepage": "https://github.com/ieax/renewhelper#readme",
+  "devDependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "autoprefixer": "^10.4.24",
+    "element-plus": "^2.13.2",
+    "esbuild": "^0.27.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "unplugin-auto-import": "^21.0.0",
+    "unplugin-vue-components": "^31.0.0",
+    "vite": "^5.4.21",
+    "vite-plugin-singlefile": "^2.3.0",
+    "vue": "^3.5.27",
+    "wrangler": "^4.61.1"
+  }
+}
