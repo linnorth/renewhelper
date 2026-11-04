@@ -165,26 +165,26 @@ const frontendCalc = {
 };
 const messages = {
     zh: {
-        upcomingBillsDays: '待付款提醒天数', upcomingBills: '%s日内待付款项', filter: { expired: '已过期 / 今天', w7: '%s天内', w30: '30天内', thisMonth: '本月内', nextMonth: '下月内', halfYear: '半年内', oneYear: '1年内', new: '新服务 (<30天)', stable: '稳定 (1个月-1年)', long: '长期 (>1年)', m1: '最近1个月', m6: '半年内', year: '今年内', earlier: '更早以前' }, viewSwitch: '视图切换', viewProjects: '项目列表', viewSpending: '支出分析', viewCalendar: '日历视图', calToday: '今天', calNoEvents: '当日无到期项目', calWeekdays: ['一','二','三','四','五','六','日'], annualSummary: '年度汇总', monthlyTrend: '月度趋势', noSpendingData: '暂无支出数据', avgMonthly: '月均', billAmount: '账单金额 (按账单周期)', opSpending: '实际支出 (按操作日期)', secPref: '偏好设置', manualRenew: '手动续期', tipToggle: '切换状态', tipRenew: '手动续期', tipEdit: '编辑服务', tipDelete: '删除服务', tipDeleteCh: '删除渠道', secNotify: '通知配置', secData: '数据管理', lblIcsTitle: '日历订阅', lblIcsUrl: '订阅地址 (iOS/Google)', btnCopy: '复制', btnResetToken: '重置令牌', loginTitle: '身份验证', passwordPlaceholder: '请输入访问密钥/Authorization Key', unlockBtn: '解锁终端/UNLOCK', check: '立即检查', add: '新增服务', settings: '系统设置', logs: '运行日志', logout: '安全退出', totalServices: '服务总数', expiringSoon: '即将到期', expiredAlert: '已过期 / 警告', serviceName: '服务名称', type: '类型', nextDue: '下次到期', uptime: '已运行', lastRenew: '上次续期', cyclePeriod: '周期', actions: '操作', cycle: '循环订阅', reset: '到期重置', disabled: '已停用', days: '天', daysUnit: '天', typeReset: '到期重置', typeCycle: '循环订阅', lunarCal: '农历', lbOffline: '离线', unit: { day: '天', week: '周', month: '月', year: '年' }, editService: '编辑服务', editLastRenewHint: '请在「历史记录」中修改', newService: '新增服务', formName: '名称', namePlaceholder: '例如: Netflix', formType: '模式', createDate: '创建时间', interval: '周期时长', note: '备注信息', status: '状态', active: '启用', disabledText: '禁用', cancel: '取消', save: '保存数据', saveSettings: '保存配置', settingsTitle: '系统设置', setNotify: '通知配置', pushSwitch: '推送总开关', pushUrl: 'Webhook 地址', notifyThreshold: '提醒阈值', setAuto: '自动化配置', autoRenewSwitch: '自动续期', autoRenewThreshold: '自动续期阈值', autoDisableThreshold: '自动禁用阈值', daysOverdue: '天后触发', sysLogs: '系统日志', execLogs: '执行记录', clearHistory: '清空历史', noLogs: '无记录', liveLog: '实时终端', btnExport: '导出备份', btnImport: '恢复备份', btnTest: '发送测试', btnRefresh: '刷新日志',
+        upcomingBillsDays: '待付款提醒天数', upcomingBills: '%s日内待付款项', filter: { expired: '已过期 / 今天', w7: '%s天内', w30: '30天内', thisMonth: '本月内', nextMonth: '下月内', halfYear: '半年内', oneYear: '1年内', new: '新服务 (<30天)', stable: '稳定 (1个月-1年)', long: '长期 (>1年)', m1: '最近1个月', m6: '半年内', year: '今年内', earlier: '更早以前' }, viewSwitch: '视图切换', viewProjects: '项目列表', viewSpending: '支出分析', viewCalendar: '日历视图', calToday: '今天', calNoEvents: '当日无到期项目', calWeekdays: ['一','二','三','四','五','六','日'], annualSummary: '年度汇总', monthlyTrend: '月度趋势', noSpendingData: '暂无支出数据', avgMonthly: '月均', billAmount: '账单金额 (按账单周期)', opSpending: '实际支出 (按操作日期)', secPref: '偏好设置', manualRenew: '手动续期', tipToggle: '切换状态', tipRenew: '手动续期', tipNotify: '立即发送通知', tipEdit: '编辑服务', tipDelete: '删除服务', tipDeleteCh: '删除渠道', secNotify: '通知配置', secData: '数据管理', lblIcsTitle: '日历订阅', lblIcsUrl: '订阅地址 (iOS/Google)', btnCopy: '复制', btnResetToken: '重置令牌', loginTitle: '身份验证', passwordPlaceholder: '请输入访问密钥/Authorization Key', unlockBtn: '解锁终端/UNLOCK', check: '立即检查', add: '新增服务', settings: '系统设置', logs: '运行日志', logout: '安全退出', totalServices: '服务总数', expiringSoon: '即将到期', expiredAlert: '已过期 / 警告', serviceName: '服务名称', type: '类型', nextDue: '下次到期', uptime: '已运行', lastRenew: '上次续期', cyclePeriod: '周期', actions: '操作', cycle: '循环订阅', reset: '到期重置', disabled: '已停用', days: '天', daysUnit: '天', typeReset: '到期重置', typeCycle: '循环订阅', lunarCal: '农历', lbOffline: '离线', unit: { day: '天', week: '周', month: '月', year: '年' }, editService: '编辑服务', editLastRenewHint: '请在「历史记录」中修改', newService: '新增服务', formName: '名称', namePlaceholder: '例如: Netflix', formType: '模式', createDate: '创建时间', interval: '周期时长', note: '备注信息', status: '状态', active: '启用', disabledText: '禁用', cancel: '取消', save: '保存数据', saveSettings: '保存配置', settingsTitle: '系统设置', setNotify: '通知配置', pushSwitch: '推送总开关', pushUrl: 'Webhook 地址', notifyThreshold: '提醒阈值', setAuto: '自动化配置', autoRenewSwitch: '自动续期', autoRenewThreshold: '自动续期阈值', autoDisableThreshold: '自动禁用阈值', daysOverdue: '天后触发', sysLogs: '系统日志', execLogs: '执行记录', clearHistory: '清空历史', noLogs: '无记录', liveLog: '实时终端', btnExport: '导出备份', btnImport: '恢复备份', btnTest: '发送测试', btnRefresh: '刷新日志',
         lblEnable: '启用', lblToken: '令牌 (Token)', lblApiKey: 'API Key', lblChatId: '会话ID',
         lblServer: '服务器URL', lblDevKey: '设备Key', lblFrom: '发件人', lblTo: '收件人', lblUid: '用户ID (UID)', lblSendKey: '发送密钥 (SendKey)', lblSecret: '加签密钥 (Secret)',
         lblTopic: '主题 (Topic)', readOnly: '只读',
         lblNotifyTime: '提醒时间', btnResetToken: '重置令牌',
         lblHeaders: '请求头 (JSON)', lblBody: '消息体 (JSON)',
-        tag: { alert: '触发提醒', renew: '自动续期', disable: '自动禁用', normal: '检查正常' }, tagLatest: '最新', tagAuto: '自动', tagManual: '手动', msg: { confirmRenew: '确认将 [%s] 的更新日期设置为今天吗？', renewSuccess: '续期成功！日期已更新: %s -> %t', tokenReset: '令牌已重置，请更新订阅地址', copyOk: '链接已复制', exportSuccess: '备份已下载', importSuccess: '数据恢复成功，即将刷新', importFail: '导入失败，请检查文件格式', passReq: '请输入密码', saved: '保存成功', saveFail: '保存失败', cleared: '已清空', clearFail: '清空失败', loginFail: '验证失败', loadLogFail: '日志加载失败', confirmDel: '确认删除此项目?', dateError: '上次更新日期不能早于创建日期', nameReq: '服务名称不能为空', nameExist: '服务名称已存在', futureError: '上次续期不能是未来时间', serviceDisabled: '服务已停用', serviceEnabled: '服务已启用', execFinish: '执行完毕!', rateFallback: 'API请求失败，已使用默认汇率', invalidUrl: '请输入有效的URL链接' }, tags: '标签', tagPlaceholder: '输入标签回车创建', searchPlaceholder: '搜索标题或备注...', tagsCol: '标签', tagAll: '全部', useLunar: '农历周期', lunarTip: '按农历日期计算周期', yes: '是', no: '否', timezone: '偏好时区', disabledFilter: '已停用', policyConfig: '自动化策略', policyNotify: '提醒提前天数', policyAuto: '自动续期', policyRenewDay: '过期续期天数', useGlobal: '全局默认', autoRenewOnDesc: '过期自动续期', autoRenewOffDesc: '过期自动禁用', previewCalc: '根据上次续期日期和周期计算', nextDue: '下次到期', typeRepeat: '固定重复',
+        tag: { alert: '触发提醒', renew: '自动续期', disable: '自动禁用', normal: '检查正常' }, tagLatest: '最新', tagAuto: '自动', tagManual: '手动', msg: { confirmRenew: '确认将 [%s] 的更新日期设置为今天吗？', renewSuccess: '续期成功！日期已更新: %s -> %t', tokenReset: '令牌已重置，请更新订阅地址', copyOk: '链接已复制', exportSuccess: '备份已下载', importSuccess: '数据恢复成功，即将刷新', importFail: '导入失败，请检查文件格式', passReq: '请输入密码', saved: '保存成功', saveFail: '保存失败', cleared: '已清空', clearFail: '清空失败', loginFail: '验证失败', loadLogFail: '日志加载失败', confirmDel: '确认删除此项目?', dateError: '上次更新日期不能早于创建日期', nameReq: '服务名称不能为空', nameExist: '服务名称已存在', futureError: '上次续期不能是未来时间', serviceDisabled: '服务已停用', serviceEnabled: '服务已启用', execFinish: '执行完毕!', rateFallback: 'API请求失败，已使用默认汇率', invalidUrl: '请输入有效的URL链接', notifySending: '正在发送通知...', notifySuccess: '通知发送成功: %s', notifyFail: '通知发送失败: %s', invalidTime: '请输入有效的时间格式 (如 08:15)', invalidDays: '请输入有效的非负整数天数' }, tags: '标签', tagPlaceholder: '输入标签回车创建', searchPlaceholder: '搜索标题或备注...', tagsCol: '标签', tagAll: '全部', useLunar: '农历周期', lunarTip: '按农历日期计算周期', yes: '是', no: '否', timezone: '偏好时区', disabledFilter: '已停用', policyConfig: '自动化策略', policyNotify: '提醒提前天数', policyAuto: '自动续期', policyRenewDay: '过期续期天数', useGlobal: '全局默认', autoRenewOnDesc: '过期自动续期', autoRenewOffDesc: '过期自动禁用', previewCalc: '根据上次续期日期和周期计算', nextDue: '下次到期', typeRepeat: '固定重复',
         fixedPrice: '账单额', currency: '币种', defaultCurrency: '默认币种', history: '历史记录', historyTitle: '续费历史', totalCost: '总花费', totalCount: '续费次数', renewDate: '操作日期', billPeriod: '账单周期', startDate: '开始日期', endDate: '结束日期', actualPrice: '实付金额', notePlaceholder: '可选备注...', btnAddHist: '补录历史', modify: '修改渠道', confirmDelHist: '删除此记录?', opDate: '操作日', amount: '金额', period: '周期', spendingDashboard: '花销看板', monthlyBreakdown: '月度明细', total: '总计', count: '笔', growth: '环比', currMonth: '本月', avgMonthlyLabel: '月均支出', itemDetails: '项目明细', noData: '暂无数据', predictedTag: '预测', last12M: '最近12个月', lblPushTitle: '自定义标题', pushTitle: 'RenewHelper 报告',
         renewUrl: '续费链接', renewUrlPlaceholder: 'https://example.com/renew', goRenew: '去续费',
         addChannel: '添加渠道', noChannels: '暂无推送渠道，请点击右上角添加。', modifyChannel: '配置渠道', channelType: '渠道类型', channelName: '渠道名称 (备注)', selectChannels: '选择推送渠道 (留空则默认推送所有)', delete: '删除'
     },
     en: {
-        upcomingBillsDays: 'Pending Reminder', upcomingBills: '%s Days Pending', viewSwitch: 'VIEW SWITCH', viewProjects: 'PROJECTS', viewSpending: 'DASHBOARD', viewCalendar: 'CALENDAR', calToday: 'TODAY', calNoEvents: 'No events', calWeekdays: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], annualSummary: 'Annual Summary', monthlyTrend: 'Monthly Trend', noSpendingData: 'No Spending Data', billAmount: 'BILL AMOUNT', opSpending: 'ACTUAL COST', avgMonthly: 'AVG', avgMonthlyLabel: 'AVG MONTHLY', filter: { expired: 'Overdue/Today', w7: 'Within %s Days', w30: 'Within 30 Days', future: 'Future(>30d)', new: 'New (<30d)', stable: 'Stable (1m-1y)', long: 'Long Term (>1y)', m1: 'Last Month', m6: 'Last 6 Months', year: 'This Year', earlier: 'Earlier' }, secPref: 'PREFERENCES', manualRenew: 'Quick Renew', tipToggle: 'Toggle Status', tipRenew: 'Quick Renew', tipEdit: 'Edit Service', tipDelete: 'Delete Service', tipDeleteCh: 'Delete Channel', secNotify: 'NOTIFICATIONS', secData: 'DATA MANAGEMENT', lblIcsTitle: 'CALENDAR SUBSCRIPTION', lblIcsUrl: 'ICS URL (iOS/Google Calendar)', btnCopy: 'COPY', btnResetToken: 'RESET TOKEN', loginTitle: 'SYSTEM ACCESS', passwordPlaceholder: 'Authorization Key', unlockBtn: 'UNLOCK TERMINAL', check: 'CHECK', add: 'ADD NEW', settings: 'CONFIG', logs: 'LOGS', logout: 'LOGOUT', totalServices: 'TOTAL SERVICES', expiringSoon: 'EXPIRING SOON', expiredAlert: 'EXPIRED / ALERT', serviceName: 'SERVICE NAME', type: 'TYPE', nextDue: 'NEXT DUE', uptime: 'UPTIME', lastRenew: 'LAST RENEW', cyclePeriod: 'CYCLE', actions: 'ACTIONS', cycle: 'CYCLE', reset: 'RESET', disabled: 'DISABLED', days: 'DAYS', daysUnit: 'DAYS', typeReset: 'RESET', typeCycle: 'CYCLE', lunarCal: 'Lunar', lbOffline: 'OFFLINE', unit: { day: 'DAY', week: 'WK', month: 'MTH', year: 'YR' }, editService: 'EDIT SERVICE', editLastRenewHint: 'Please modify in History', newService: 'NEW SERVICE', formName: 'NAME', namePlaceholder: 'e.g. Netflix', formType: 'MODE', createDate: 'CREATE DATE', interval: 'INTERVAL', note: 'NOTE', status: 'STATUS', active: 'ACTIVE', disabledText: 'DISABLED', cancel: 'CANCEL', save: 'SAVE DATA', saveSettings: 'SAVE CONFIG', settingsTitle: 'SYSTEM CONFIG', setNotify: 'NOTIFICATION', pushSwitch: 'MASTER PUSH', pushUrl: 'WEBHOOK URL', notifyThreshold: 'ALERT THRESHOLD', setAuto: 'AUTOMATION', autoRenewSwitch: 'AUTO RENEW', autoRenewThreshold: 'RENEW AFTER', autoDisableThreshold: 'DISABLE AFTER', daysOverdue: 'DAYS OVERDUE', sysLogs: 'SYSTEM LOGS', execLogs: 'EXECUTION LOGS', clearHistory: 'CLEAR HISTORY', noLogs: 'NO DATA', liveLog: 'LIVE TERMINAL', btnExport: 'Export Data', btnImport: 'Import Data', btnTest: 'Send Test', btnRefresh: 'REFRESH', last12M: 'LAST 12M',
+        upcomingBillsDays: 'Pending Reminder', upcomingBills: '%s Days Pending', viewSwitch: 'VIEW SWITCH', viewProjects: 'PROJECTS', viewSpending: 'DASHBOARD', viewCalendar: 'CALENDAR', calToday: 'TODAY', calNoEvents: 'No events', calWeekdays: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], annualSummary: 'Annual Summary', monthlyTrend: 'Monthly Trend', noSpendingData: 'No Spending Data', billAmount: 'BILL AMOUNT', opSpending: 'ACTUAL COST', avgMonthly: 'AVG', avgMonthlyLabel: 'AVG MONTHLY', filter: { expired: 'Overdue/Today', w7: 'Within %s Days', w30: 'Within 30 Days', future: 'Future(>30d)', new: 'New (<30d)', stable: 'Stable (1m-1y)', long: 'Long Term (>1y)', m1: 'Last Month', m6: 'Last 6 Months', year: 'This Year', earlier: 'Earlier' }, secPref: 'PREFERENCES', manualRenew: 'Quick Renew', tipToggle: 'Toggle Status', tipRenew: 'Quick Renew', tipNotify: 'Send Notification', tipEdit: 'Edit Service', tipDelete: 'Delete Service', tipDeleteCh: 'Delete Channel', secNotify: 'NOTIFICATIONS', secData: 'DATA MANAGEMENT', lblIcsTitle: 'CALENDAR SUBSCRIPTION', lblIcsUrl: 'ICS URL (iOS/Google Calendar)', btnCopy: 'COPY', btnResetToken: 'RESET TOKEN', loginTitle: 'SYSTEM ACCESS', passwordPlaceholder: 'Authorization Key', unlockBtn: 'UNLOCK TERMINAL', check: 'CHECK', add: 'ADD NEW', settings: 'CONFIG', logs: 'LOGS', logout: 'LOGOUT', totalServices: 'TOTAL SERVICES', expiringSoon: 'EXPIRING SOON', expiredAlert: 'EXPIRED / ALERT', serviceName: 'SERVICE NAME', type: 'TYPE', nextDue: 'NEXT DUE', uptime: 'UPTIME', lastRenew: 'LAST RENEW', cyclePeriod: 'CYCLE', actions: 'ACTIONS', cycle: 'CYCLE', reset: 'RESET', disabled: 'DISABLED', days: 'DAYS', daysUnit: 'DAYS', typeReset: 'RESET', typeCycle: 'CYCLE', lunarCal: 'Lunar', lbOffline: 'OFFLINE', unit: { day: 'DAY', week: 'WK', month: 'MTH', year: 'YR' }, editService: 'EDIT SERVICE', editLastRenewHint: 'Please modify in History', newService: 'NEW SERVICE', formName: 'NAME', namePlaceholder: 'e.g. Netflix', formType: 'MODE', createDate: 'CREATE DATE', interval: 'INTERVAL', note: 'NOTE', status: 'STATUS', active: 'ACTIVE', disabledText: 'DISABLED', cancel: 'CANCEL', save: 'SAVE DATA', saveSettings: 'SAVE CONFIG', settingsTitle: 'SYSTEM CONFIG', setNotify: 'NOTIFICATION', pushSwitch: 'MASTER PUSH', pushUrl: 'WEBHOOK URL', notifyThreshold: 'ALERT THRESHOLD', setAuto: 'AUTOMATION', autoRenewSwitch: 'AUTO RENEW', autoRenewThreshold: 'RENEW AFTER', autoDisableThreshold: 'DISABLE AFTER', daysOverdue: 'DAYS OVERDUE', sysLogs: 'SYSTEM LOGS', execLogs: 'EXECUTION LOGS', clearHistory: 'CLEAR HISTORY', noLogs: 'NO DATA', liveLog: 'LIVE TERMINAL', btnExport: 'Export Data', btnImport: 'Import Data', btnTest: 'Send Test', btnRefresh: 'REFRESH', last12M: 'LAST 12M',
         lblEnable: 'Enable', lblToken: 'Token', lblApiKey: 'API Key', lblChatId: 'Chat ID',
         lblServer: 'Server URL', lblDevKey: 'Device Key', lblFrom: 'From Email', lblTo: 'To Email', lblUid: 'UID', lblSendKey: 'SendKey', lblSecret: 'Secret (Optional)',
 
         lblTopic: 'Topic', readOnly: 'Read-only',
         lblNotifyTime: 'Alarm Time', btnResetToken: 'RESET TOKEN',
         lblHeaders: 'Headers (JSON)', lblBody: 'Body (JSON)',
-        tag: { alert: 'ALERT', renew: 'RENEWED', disable: 'DISABLED', normal: 'NORMAL' }, tagLatest: 'LATEST', tagAuto: 'AUTO', tagManual: 'MANUAL', msg: { confirmRenew: 'Renew [%s] to today based on your timezone?', renewSuccess: 'Renewed! Date updated: %s -> %t', tokenReset: 'Token Reset. Update your calendar apps.', copyOk: 'Link Copied', exportSuccess: 'Backup Downloaded', importSuccess: 'Restore Success, Refreshing...', importFail: 'Import Failed, Check File Format', passReq: 'Password Required', saved: 'Data Saved', saveFail: 'Save Failed', cleared: 'Cleared', clearFail: 'Clear Failed', loginFail: 'Access Denied', loadLogFail: 'Load Failed', confirmDel: 'Confirm Delete?', dateError: 'Last renew date cannot be earlier than create date', nameReq: 'Name Required', nameExist: 'Name already exists', futureError: 'Renew date cannot be in the future', serviceDisabled: 'Service Disabled', serviceEnabled: 'Service Enabled', execFinish: 'EXECUTION FINISHED!', rateFallback: 'Network Error. Used default rates.', invalidUrl: 'Please enter a valid URL' }, tags: 'TAGS', tagPlaceholder: 'Press Enter to create tag', searchPlaceholder: 'Search...', tagsCol: 'TAGS', tagAll: 'ALL', useLunar: 'LUNAR', lunarTip: 'Calculate based on Lunar calendar', yes: 'Yes', no: 'No', timezone: 'Timezone', disabledFilter: 'DISABLED', policyConfig: 'Policy Config', policyNotify: 'NOTIFY DAYS', policyAuto: 'AUTO RENEW', policyRenewDay: 'RENEW DAYS', useGlobal: 'Global Default', autoRenewOnDesc: 'Auto Renew when overdue', autoRenewOffDesc: 'Auto Disable when overdue', previewCalc: 'Based on Last Renew Date & Interval', nextDue: 'NEXT DUE', typeRepeat: 'REPEAT',
+        tag: { alert: 'ALERT', renew: 'RENEWED', disable: 'DISABLED', normal: 'NORMAL' }, tagLatest: 'LATEST', tagAuto: 'AUTO', tagManual: 'MANUAL', msg: { confirmRenew: 'Renew [%s] to today based on your timezone?', renewSuccess: 'Renewed! Date updated: %s -> %t', tokenReset: 'Token Reset. Update your calendar apps.', copyOk: 'Link Copied', exportSuccess: 'Backup Downloaded', importSuccess: 'Restore Success, Refreshing...', importFail: 'Import Failed, Check File Format', passReq: 'Password Required', saved: 'Data Saved', saveFail: 'Save Failed', cleared: 'Cleared', clearFail: 'Clear Failed', loginFail: 'Access Denied', loadLogFail: 'Load Failed', confirmDel: 'Confirm Delete?', dateError: 'Last renew date cannot be earlier than create date', nameReq: 'Name Required', nameExist: 'Name already exists', futureError: 'Renew date cannot be in the future', serviceDisabled: 'Service Disabled', serviceEnabled: 'Service Enabled', execFinish: 'EXECUTION FINISHED!', rateFallback: 'Network Error. Used default rates.', invalidUrl: 'Please enter a valid URL', notifySending: 'Sending notification...', notifySuccess: 'Notification sent: %s', notifyFail: 'Notification failed: %s', invalidTime: 'Invalid time format (e.g. 08:15)', invalidDays: 'Please enter a valid non-negative integer' }, tags: 'TAGS', tagPlaceholder: 'Press Enter to create tag', searchPlaceholder: 'Search...', tagsCol: 'TAGS', tagAll: 'ALL', useLunar: 'LUNAR', lunarTip: 'Calculate based on Lunar calendar', yes: 'Yes', no: 'No', timezone: 'Timezone', disabledFilter: 'DISABLED', policyConfig: 'Policy Config', policyNotify: 'NOTIFY DAYS', policyAuto: 'AUTO RENEW', policyRenewDay: 'RENEW DAYS', useGlobal: 'Global Default', autoRenewOnDesc: 'Auto Renew when overdue', autoRenewOffDesc: 'Auto Disable when overdue', previewCalc: 'Based on Last Renew Date & Interval', nextDue: 'NEXT DUE', typeRepeat: 'REPEAT',
         fixedPrice: 'PRICE', currency: 'CURRENCY', defaultCurrency: 'DEFAULT CURRENCY', history: 'History', historyTitle: 'Renewal History', totalCost: 'Total Cost', totalCount: 'Total Count', renewDate: 'Op Date', billPeriod: 'Bill Period', startDate: 'Start Date', endDate: 'End Date', actualPrice: 'Actual Price', notePlaceholder: 'Optional note...', btnAddHist: 'Add Record', modify: 'Edit Channel', confirmDelHist: 'Delete record?', opDate: 'Op Date', amount: 'Amount', period: 'Period', spendingDashboard: 'SPENDING DASHBOARD', monthlyBreakdown: 'MONTHLY BREAKDOWN', total: 'TOTAL', count: 'COUNT', growth: 'GROWTH', currMonth: 'CURRENT', itemDetails: 'ITEMS', noData: 'NO DATA', predictedTag: 'PREDICTED', lblPushTitle: 'Push Title', pushTitle: 'RenewHelper Report',
         renewUrl: 'RENEW URL', renewUrlPlaceholder: 'https://example.com/renew', goRenew: 'RENEW',
         addChannel: 'Add Channel', noChannels: 'No channels. Add one!', modifyChannel: 'Edit Channel', channelType: 'Type', channelName: 'Name', selectChannels: 'NOTIFICATION CHANNELS (Leave empty for All)', delete: 'Delete'
@@ -365,14 +365,97 @@ const showProjected = ref(true);
 const selectedYear = ref('recent'); // 'recent' = last 12 months, or year number like 2024
 const selectedMonth = ref(null); // selected month key like '2026-01' for detail view
 const locale = ref(ZhCn), tableKey = ref(0), termRef = ref(null), submitting = ref(false);
-// 兼容工具：将旧数据单字符串转为数组，空值保护
+// 兼容工具：将旧数据单数字或数组转为字符串数组（适配 el-select allow-create），空值保护
+const normalizeNotifyDays = (listVal, singleVal) => {
+    const raw = Array.isArray(listVal) && listVal.length > 0
+        ? listVal
+        : (Array.isArray(singleVal) && singleVal.length > 0
+            ? singleVal
+            : (singleVal !== undefined && singleVal !== null && singleVal !== '' ? [singleVal] : [3]));
+    const nums = Array.from(new Set(
+        raw.map(v => parseInt(String(v).replace(/[^\d]/g, ''), 10))
+           .filter(n => Number.isFinite(n) && n >= 0)
+    )).sort((a, b) => b - a);
+    return nums.length > 0 ? nums.map(String) : ['3'];
+};
+const notifyDaysPresetOptions = ['0', '1', '2', '3', '5', '7', '10', '14', '15', '30'];
+
+// 兼容工具：将旧数据单字符串转为数组，空值保护，并格式化为 HH:mm
+const formatTimeItem = (val) => {
+    if (val === undefined || val === null) return null;
+    let s = String(val).trim().replace(/：/g, ':');
+    if (/^\d{3,4}$/.test(s)) {
+        s = s.length === 3 ? `0${s[0]}:${s.slice(1)}` : `${s.slice(0, 2)}:${s.slice(2)}`;
+    }
+    const m = s.match(/^(\d{1,2}):(\d{1,2})$/);
+    if (!m) return null;
+    const hh = parseInt(m[1], 10);
+    const mm = parseInt(m[2], 10);
+    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+    return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+};
 const normalizeNotifyTime = (val) => {
-    if (Array.isArray(val)) return val.length > 0 ? val : ['08:00'];
-    return val ? [val] : ['08:00'];
+    const raw = Array.isArray(val) ? val : (val ? [val] : ['08:00']);
+    const cleaned = Array.from(new Set(raw.map(formatTimeItem).filter(Boolean))).sort();
+    return cleaned.length > 0 ? cleaned : ['08:00'];
 };
 // 提醒时间选项列表 (00:00~23:30 每30分钟)
 const notifyTimeOptions = Array.from({ length: 48 }, (_, i) => { const h = String(Math.floor(i / 2)).padStart(2, '0'); const m = i % 2 === 0 ? '00' : '30'; return `${h}:${m}`; });
-const form = ref({ id: '', name: '', createDate: '', lastRenewDate: '', intervalDays: 30, cycleUnit: 'day', type: 'cycle', message: '', enabled: true, tags: [], useLunar: false, notifyDays: 3, notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '' });
+const form = ref({ id: '', name: '', createDate: '', lastRenewDate: '', intervalDays: 30, cycleUnit: 'day', type: 'cycle', message: '', enabled: true, tags: [], useLunar: false, notifyDays: ['3'], notifyDaysList: [3], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '' });
+const notifyDaysDisplayOptions = computed(() => {
+    const cur = Array.isArray(form.value.notifyDays) ? form.value.notifyDays : [];
+    const merged = Array.from(new Set([...notifyDaysPresetOptions, ...cur]))
+        .map(v => parseInt(String(v).replace(/[^\d]/g, ''), 10))
+        .filter(n => Number.isFinite(n) && n >= 0)
+        .sort((a, b) => a - b)
+        .map(String);
+    return Array.from(new Set(merged));
+});
+const getNotifyDayLabel = (d) => {
+    const num = String(d);
+    if (num === '0') return lang.value === 'zh' ? '0天 (当天)' : '0d (Today)';
+    return lang.value === 'zh' ? `${num}天` : `${num}d`;
+};
+const onNotifyDaysChange = (vals) => {
+    if (!Array.isArray(vals)) return;
+    const valid = [];
+    let hasInvalid = false;
+    for (const v of vals) {
+        const cleaned = String(v).trim().replace(/(天|d|days?)$/i, '').trim();
+        if (!/^\d+$/.test(cleaned)) {
+            hasInvalid = true;
+            continue;
+        }
+        const n = parseInt(cleaned, 10);
+        if (Number.isFinite(n) && n >= 0) {
+            valid.push(String(n));
+        } else {
+            hasInvalid = true;
+        }
+    }
+    if (hasInvalid) ElMessage.warning(t('msg.invalidDays'));
+    const uniqueSorted = Array.from(new Set(valid)).sort((a, b) => Number(b) - Number(a));
+    form.value.notifyDays = uniqueSorted;
+};
+const notifyTimeDisplayOptions = computed(() => {
+    const cur = Array.isArray(form.value.notifyTime) ? form.value.notifyTime : [];
+    return Array.from(new Set([...notifyTimeOptions, ...cur.map(formatTimeItem).filter(Boolean)])).sort();
+});
+const onNotifyTimeChange = (vals) => {
+    if (!Array.isArray(vals)) return;
+    const valid = [];
+    let hasInvalid = false;
+    for (const v of vals) {
+        const formatted = formatTimeItem(v);
+        if (formatted) {
+            valid.push(formatted);
+        } else {
+            hasInvalid = true;
+        }
+    }
+    if (hasInvalid) ElMessage.warning(t('msg.invalidTime'));
+    form.value.notifyTime = Array.from(new Set(valid)).sort();
+};
 const DEFAULT_CALENDAR_SUBSCRIPTION_ID = 'default';
 const settingsForm = ref({
     notifyUrl: '',
@@ -811,7 +894,7 @@ const toggleTheme = () => {
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => windowWidth.value = window.innerWidth;
 const drawerSize = computed(() => windowWidth.value < 640 ? '100%' : '600px'); // 640px matching tailwind sm
-const actionColWidth = computed(() => windowWidth.value < 640 ? 100 : 180);
+const actionColWidth = computed(() => windowWidth.value < 640 ? 100 : 215);
 const paginationLayout = computed(() => windowWidth.value < 640 ? 'prev, pager, next, jumper' : 'total, sizes, prev, pager, next, jumper');
 // 2. 定义分页状态
 const currentPage = ref(1);
@@ -864,7 +947,16 @@ const calculateTotal = (items) => {
     return total.toFixed(2);
 };
 
-const expiringItems = computed(() => list.value.filter(i => i.enabled && i.daysLeft > 0 && i.daysLeft <= ((typeof i.notifyDays === 'number') ? i.notifyDays : 3)));
+const getMaxNotifyDays = (i) => {
+    if (Array.isArray(i.notifyDaysList) && i.notifyDaysList.length > 0) {
+        return Math.max(...i.notifyDaysList.map(Number));
+    }
+    if (Array.isArray(i.notifyDays) && i.notifyDays.length > 0) {
+        return Math.max(...i.notifyDays.map(Number));
+    }
+    return (typeof i.notifyDays === 'number') ? i.notifyDays : 3;
+};
+const expiringItems = computed(() => list.value.filter(i => i.enabled && i.daysLeft > 0 && i.daysLeft <= getMaxNotifyDays(i)));
 const expiredItems = computed(() => list.value.filter(i => i.enabled && i.daysLeft <= 0));
 
 const expiringCount = computed(() => expiringItems.value.length);
@@ -1571,15 +1663,50 @@ const saveItem = async () => {
         }];
     }
 
+    // 保存前处理 notifyDays：拆为 notifyDays(最大天数数字，旧版兼容) + notifyDaysList(数字数组，多选新功能)
+    const rawDaysStrs = normalizeNotifyDays(form.value.notifyDays, null);
+    const rawDaysNums = rawDaysStrs.map(Number);
     // 保存前处理 notifyTime：拆为 notifyTime(字符串，旧版兼容) + notifyTimes(数组，新功能)
-    const rawTimes = Array.isArray(form.value.notifyTime) && form.value.notifyTime.length > 0 ? form.value.notifyTime : ['08:00'];
-    form.value.notifyTimes = rawTimes;
-    form.value.notifyTime = rawTimes[0];
+    const rawTimes = normalizeNotifyTime(form.value.notifyTime);
+
+    const itemToSave = {
+        ...form.value,
+        notifyDaysList: rawDaysNums,
+        notifyDays: Math.max(...rawDaysNums),
+        notifyTimes: rawTimes,
+        notifyTime: rawTimes[0]
+    };
 
     let newList = [...list.value];
-    if (isEdit.value) { const i = newList.findIndex(x => x.id === form.value.id); if (i !== -1) newList[i] = form.value; }
-    else newList.push(form.value);
+    if (isEdit.value) { const i = newList.findIndex(x => x.id === itemToSave.id); if (i !== -1) newList[i] = itemToSave; }
+    else newList.push(itemToSave);
     list.value = newList; dialogVisible.value = false; tableKey.value++; await saveData(newList, null);
+};
+
+const notifyingId = ref('');
+const sendItemNotify = async (row) => {
+    if (notifyingId.value) return;
+    notifyingId.value = row.id;
+    const loadingMsg = ElMessage({ type: 'loading', duration: 0, message: t('msg.notifySending') });
+    try {
+        const r = await fetch('/api/notify-item', {
+            method: 'POST',
+            headers: { ...getAuth(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: row.id, item: row, lang: lang.value })
+        });
+        const d = await r.json();
+        loadingMsg.close();
+        if (r.ok) {
+            ElMessage.success(t('msg.notifySuccess').replace('%s', d.msg));
+        } else {
+            ElMessage.error(t('msg.notifyFail').replace('%s', d.msg));
+        }
+    } catch (e) {
+        loadingMsg.close();
+        ElMessage.error(t('msg.notifyFail').replace('%s', e.message));
+    } finally {
+        notifyingId.value = '';
+    }
 };
 
 const toggleEnable = async (row) => { await saveData(null, null, false); tableKey.value++; row.enabled ? ElMessage.success(t('msg.serviceEnabled')) : ElMessage.warning(t('msg.serviceDisabled')); };
@@ -1891,14 +2018,14 @@ const repeatUpcomingDates = computed(() => {
     } catch(e) { /* 计算异常 */ }
     return null;
 });
-const openAdd = () => { isEdit.value = false; const d = getLocalToday(); form.value = { id: Date.now().toString(), name: '', createDate: d, lastRenewDate: d, intervalDays: 30, cycleUnit: 'day', type: 'cycle', enabled: true, tags: [], useLunar: false, notifyDays: 3, notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: settings.value.defaultCurrency || 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '', repeat: { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] } }; dialogVisible.value = true; };
+const openAdd = () => { isEdit.value = false; const d = getLocalToday(); form.value = { id: Date.now().toString(), name: '', createDate: d, lastRenewDate: d, intervalDays: 30, cycleUnit: 'day', type: 'cycle', enabled: true, tags: [], useLunar: false, notifyDays: ['3'], notifyDaysList: [3], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: settings.value.defaultCurrency || 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '', repeat: { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] } }; dialogVisible.value = true; };
 const editItem = (row) => { 
     isEdit.value = true; 
     let rObj = row.repeat ? JSON.parse(JSON.stringify(row.repeat)) : { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] };
     if (rObj.bymonthday && Array.isArray(rObj.bymonthday)) rObj.bymonthday = rObj.bymonthday.map(String);
     if (rObj.bysetpos !== null && rObj.bysetpos !== undefined) rObj.bysetpos = String(rObj.bysetpos);
     if (!rObj.bycycleday) rObj.bycycleday = [];
-    form.value = { ...row, cycleUnit: row.cycleUnit || 'day', tags: [...(row.tags || [])], useLunar: !!row.useLunar, notifyDays: (row.notifyDays !== undefined ? row.notifyDays : 3), notifyTime: normalizeNotifyTime(row.notifyTimes || row.notifyTime), autoRenew: row.autoRenew !== false, autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 3), notifyChannelIds: (Array.isArray(row.notifyChannelIds) ? row.notifyChannelIds : []), repeat: rObj }; 
+    form.value = { ...row, cycleUnit: row.cycleUnit || 'day', tags: [...(row.tags || [])], useLunar: !!row.useLunar, notifyDays: normalizeNotifyDays(row.notifyDaysList, row.notifyDays), notifyTime: normalizeNotifyTime(row.notifyTimes || row.notifyTime), autoRenew: row.autoRenew !== false, autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 3), notifyChannelIds: (Array.isArray(row.notifyChannelIds) ? row.notifyChannelIds : []), repeat: rObj }; 
     dialogVisible.value = true; 
 };
 const openSettings = () => {
@@ -3375,6 +3502,12 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                                         type="success" plain :icon="RefreshRight"
                                                         @click="openRenew(scope.row)"></el-button>
                                                 </el-tooltip>
+                                                <el-tooltip :content="t('tipNotify')" placement="top" :hide-after="0">
+                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                        type="info" plain :icon="Bell"
+                                                        :loading="notifyingId === scope.row.id"
+                                                        @click="sendItemNotify(scope.row)"></el-button>
+                                                </el-tooltip>
                                                 <el-tooltip :content="t('history')" placement="top" :hide-after="0">
                                                     <el-button class="!p-2 !rounded-none !ml-0" size="small"
                                                         type="warning" plain :icon="Tickets"
@@ -3411,6 +3544,9 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                                     <el-dropdown-menu>
                                                         <el-dropdown-item :icon="RefreshRight"
                                                             @click="openRenew(scope.row)">{{ t('tipRenew')
+                                                            }}</el-dropdown-item>
+                                                        <el-dropdown-item :icon="Bell"
+                                                            @click="sendItemNotify(scope.row)">{{ t('tipNotify')
                                                             }}</el-dropdown-item>
                                                         <el-dropdown-item :icon="Tickets"
                                                             @click="openHistory(scope.row)">{{ t('history')
@@ -4307,18 +4443,24 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                         <el-form-item class="!mb-0">
                             <template #label>
                                 <div class="flex items-center gap-1">
-                                    <span>{{ t('policyNotify') }}</span>
-                                    <el-tooltip :content="lang === 'zh' ? '距到期多少天时开始发送提醒通知，为必须数值。' : 'Days before expiration to start alerting, required.'" placement="top">
+                                    <span>{{ t('policyNotify') }} / {{ t('lblNotifyTime') }}</span>
+                                    <el-tooltip :content="lang === 'zh' ? '提前天数支持多选及输入自定义天数(如 5、3、1)，提醒时间支持多选及输入自定义时间(如 08:15)。' : 'Multi-select or type custom notify days (e.g. 5, 3, 1) and alarm times (e.g. 08:15).'" placement="top">
                                         <span class="text-red-500 cursor-help font-bold">*</span>
                                     </el-tooltip>
                                 </div>
                             </template>
                             <div class="flex gap-2 w-full">
-                                <el-input-number v-model="form.notifyDays" :min="0" controls-position="right"
-                                    class="!w-24"></el-input-number>
-                                <el-select v-model="form.notifyTime" multiple placeholder="08:00"
-                                    class="!flex-1" collapse-tags collapse-tags-tooltip>
-                                    <el-option v-for="t in notifyTimeOptions" :key="t" :label="t" :value="t" />
+                                <el-select v-model="form.notifyDays" multiple filterable allow-create default-first-option
+                                    :reserve-keyword="false" collapse-tags collapse-tags-tooltip
+                                    :placeholder="lang === 'zh' ? '提前天数' : 'Days'"
+                                    class="!flex-1 min-w-0" @change="onNotifyDaysChange">
+                                    <el-option v-for="d in notifyDaysDisplayOptions" :key="'nd-' + d"
+                                        :label="getNotifyDayLabel(d)" :value="d" />
+                                </el-select>
+                                <el-select v-model="form.notifyTime" multiple filterable allow-create default-first-option
+                                    :reserve-keyword="false" placeholder="08:00"
+                                    class="!flex-1 min-w-0" collapse-tags collapse-tags-tooltip @change="onNotifyTimeChange">
+                                    <el-option v-for="tOpt in notifyTimeDisplayOptions" :key="tOpt" :label="tOpt" :value="tOpt" />
                                 </el-select>
                             </div>
                         </el-form-item>

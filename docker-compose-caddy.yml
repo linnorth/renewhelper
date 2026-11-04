@@ -10,7 +10,7 @@ services:
       - ./data:/data
     environment:
       - AUTH_PASSWORD=admin
-      - CRON_SCHEDULE=0,30 * * * *
+      - CRON_SCHEDULE=*/5 * * * *
       - TZ=Asia/Shanghai
 
   caddy:

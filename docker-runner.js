@@ -11,7 +11,7 @@ import cron from "node-cron";
 const PORT = parseInt(process.env.PORT || "9787");
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD || "admin"; // 默认密码
 // 不要修改Cron！！！
-const CRON_SCHEDULE = process.env.CRON_SCHEDULE || "0,30 * * * *"; 
+const CRON_SCHEDULE = process.env.CRON_SCHEDULE || "*/5 * * * *"; 
 
 async function start() {
   // 2. 初始化 Miniflare

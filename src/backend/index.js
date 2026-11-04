@@ -1223,6 +1223,48 @@ async function webhookAdapterImpl(c, title, body) {
 // 4. Logic Controllers
 // ==========================================
 
+function normalizeNotifyDaysList(rawList, rawSingle) {
+    const source = Array.isArray(rawList) && rawList.length > 0
+        ? rawList
+        : (Array.isArray(rawSingle) && rawSingle.length > 0
+            ? rawSingle
+            : (rawSingle !== undefined && rawSingle !== null && rawSingle !== "" ? [rawSingle] : [3]));
+    const cleaned = Array.from(
+        new Set(
+            source
+                .map((v) => parseInt(String(v).replace(/[^\d]/g, ""), 10))
+                .filter((n) => Number.isFinite(n) && n >= 0)
+        )
+    ).sort((a, b) => b - a);
+    return cleaned.length > 0 ? cleaned : [3];
+}
+
+function normalizeNotifyTimeStr(val) {
+    if (val === undefined || val === null) return null;
+    let s = String(val).trim().replace(/：/g, ":");
+    if (/^\d{3,4}$/.test(s)) {
+        s = s.length === 3 ? `0${s[0]}:${s.slice(1)}` : `${s.slice(0, 2)}:${s.slice(2)}`;
+    }
+    const m = s.match(/^(\d{1,2}):(\d{1,2})$/);
+    if (!m) return null;
+    const hh = parseInt(m[1], 10);
+    const mm = parseInt(m[2], 10);
+    if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+    return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+}
+
+function normalizeNotifyTimesList(rawTimes, rawSingle) {
+    const source = Array.isArray(rawTimes) && rawTimes.length > 0
+        ? rawTimes
+        : (Array.isArray(rawSingle) && rawSingle.length > 0
+            ? rawSingle
+            : (rawSingle ? [rawSingle] : ["08:00"]));
+    const cleaned = Array.from(
+        new Set(source.map(normalizeNotifyTimeStr).filter(Boolean))
+    ).sort();
+    return cleaned.length > 0 ? cleaned : ["08:00"];
+}
+
 function calculateStatus(item, timezone = "UTC") {
     // 使用时区感知的“今天”
     const today = Calc.getTzToday(timezone);
@@ -1298,6 +1340,9 @@ function calculateStatus(item, timezone = "UTC") {
         if (ll) lLast = ll.fullStr;
     }
 
+    const normDaysList = normalizeNotifyDaysList(item.notifyDaysList, item.notifyDays);
+    const normTimesList = normalizeNotifyTimesList(item.notifyTimes, item.notifyTime);
+
     return {
         ...item,
         enabled: item.enabled !== false,
@@ -1311,7 +1356,10 @@ function calculateStatus(item, timezone = "UTC") {
         lastRenewDateLunar: lLast,
         tags: Array.isArray(item.tags) ? item.tags : [],
         useLunar: !!item.useLunar,
-        notifyTime: item.notifyTime || "08:00",
+        notifyDays: Math.max(...normDaysList),
+        notifyDaysList: normDaysList,
+        notifyTime: normTimesList[0] || "08:00",
+        notifyTimes: normTimesList,
     };
 }
 
@@ -1434,7 +1482,10 @@ async function checkAndRenew(env, isSched, lang = "zh") {
 
         const iAutoRenew = it.autoRenew !== false;
         const iRenewDays = typeof it.autoRenewDays === "number" ? it.autoRenewDays : 3;
-        const iNotifyDays = typeof it.notifyDays === "number" ? it.notifyDays : 3;
+        const iNotifyDaysList = Array.isArray(st.notifyDaysList) && st.notifyDaysList.length > 0
+            ? st.notifyDaysList
+            : normalizeNotifyDaysList(it.notifyDaysList, it.notifyDays);
+        const iNotifyDaysStr = iNotifyDaysList.join(",");
 
         // ============================================================
         // 逻辑 A: 自动禁用 (Auto Disable)
@@ -1546,7 +1597,7 @@ async function checkAndRenew(env, isSched, lang = "zh") {
         // ============================================================
         // 逻辑 C: 到期提醒 (Notify)
         // ============================================================
-        else if (days <= iNotifyDays) {
+        else if (days <= 0 || iNotifyDaysList.includes(days)) {
             const statusText =
                 days === 0
                     ? t("today", lang)
@@ -1558,21 +1609,26 @@ async function checkAndRenew(env, isSched, lang = "zh") {
                     "checkLog",
                     lang,
                     it.name,
-                    `${statusText} ${t("thres", lang, iNotifyDays)}`
+                    `${statusText} ${t("thres", lang, iNotifyDaysStr)}`
                 )
             );
 
             let shouldPush = true;
             if (isSched) {
                 // 定时任务运行时，检查是否到达指定的推送时间 (notifyTimes 数组优先，兼容旧版 notifyTime 字符串)
-                const ntArr = Array.isArray(it.notifyTimes) && it.notifyTimes.length > 0
-                    ? it.notifyTimes : [it.notifyTime || "08:00"];
+                // 按 5 分钟时间窗口分桶匹配，配合 */5 * * * * Cron 确保自定义分钟精准触发且不重复推送
+                const ntArr = Array.isArray(st.notifyTimes) && st.notifyTimes.length > 0
+                    ? st.notifyTimes
+                    : [st.notifyTime || "08:00"];
+                const nowMins = nowH * 60 + nowM;
                 const matched = ntArr.some(nt => {
                     const [tgtH, tgtM] = String(nt).split(":").map(Number);
-                    return Math.abs(nowH * 60 + nowM - (tgtH * 60 + tgtM)) <= 5;
+                    if (!Number.isFinite(tgtH) || !Number.isFinite(tgtM)) return false;
+                    const tgtMins = tgtH * 60 + tgtM;
+                    return Math.floor(nowMins / 5) === Math.floor(tgtMins / 5);
                 });
 
-                // 只有在设定时间前后 5分钟内才推送
+                // 只有在设定时间所属的 5 分钟窗口内才推送
                 if (!matched) {
                     shouldPush = false;
                 }
@@ -1838,6 +1894,8 @@ app.post(
 
         // 2. 处理 items 数据清洗 + 【关键修复】强制重新计算状态
         const items = body.items.map((i) => {
+            const normDaysList = normalizeNotifyDaysList(i.notifyDaysList, i.notifyDays);
+            const normTimesList = normalizeNotifyTimesList(i.notifyTimes, i.notifyTime);
             // 基础数据清洗
             const cleanItem = {
                 ...i,
@@ -1846,9 +1904,10 @@ app.post(
                 enabled: i.enabled !== false,
                 tags: Array.isArray(i.tags) ? i.tags : [],
                 useLunar: !!i.useLunar,
-                notifyDays: i.notifyDays !== null ? Number(i.notifyDays) : null,
-                notifyTime: typeof i.notifyTime === 'string' ? i.notifyTime : (Array.isArray(i.notifyTime) ? (i.notifyTime[0] || "08:00") : "08:00"),
-                notifyTimes: Array.isArray(i.notifyTimes) && i.notifyTimes.length > 0 ? i.notifyTimes : (typeof i.notifyTime === 'string' ? [i.notifyTime || "08:00"] : ["08:00"]),
+                notifyDays: Math.max(...normDaysList),
+                notifyDaysList: normDaysList,
+                notifyTime: normTimesList[0] || "08:00",
+                notifyTimes: normTimesList,
                 autoRenew: i.autoRenew !== false,
                 autoRenewDays: i.autoRenewDays !== null ? Number(i.autoRenewDays) : null,
                 fixedPrice: Number(i.fixedPrice) || 0,
@@ -2016,6 +2075,90 @@ app.post(
             return response({ code: 200, msg: res });
         } catch (e) {
             return error("TEST_ERROR: " + e.message);
+        }
+    })
+);
+
+// 立即发送单个服务通知接口
+app.post(
+    "/api/notify-item",
+    withAuth(async (req, env) => {
+        const ip = req.headers.get("cf-connecting-ip");
+        if (!(await RateLimiter.check(env, ip, "notify_item")))
+            return error("RATE_LIMIT_EXCEEDED: Max 100/day, 1/sec", 429);
+
+        try {
+            const body = await req.json();
+            const [settings, items] = await Promise.all([
+                DataStore.getSettings(env),
+                DataStore.getItems(env),
+            ]);
+
+            const lang = body.lang === "en" ? "en" : (settings.language === "en" ? "en" : "zh");
+            const targetItem = items.find((i) => String(i.id) === String(body.id)) || body.item;
+            if (!targetItem) {
+                return error("ITEM_NOT_FOUND", 404);
+            }
+
+            const allChannels = Array.isArray(settings.channels)
+                ? settings.channels.filter((c) => c.enable)
+                : [];
+            if (allChannels.length === 0) {
+                return error("NO_ENABLED_CHANNELS", 400);
+            }
+
+            const targetChannels =
+                !targetItem.notifyChannelIds ||
+                !Array.isArray(targetItem.notifyChannelIds) ||
+                targetItem.notifyChannelIds.length === 0
+                    ? allChannels
+                    : allChannels.filter((ch) => targetItem.notifyChannelIds.includes(ch.id));
+
+            if (targetChannels.length === 0) {
+                return error("NO_MATCHING_ENABLED_CHANNELS", 400);
+            }
+
+            const st = calculateStatus(targetItem, settings.timezone);
+            const title = settings.notifyTitle || t("pushTitle", lang);
+            const msg = st.message ? ` (${t("note", lang)}: ${st.message})` : "";
+            const dayStr =
+                st.daysLeft === 0
+                    ? t("today", lang)
+                    : st.daysLeft < 0
+                        ? t("overdue", lang, Math.abs(st.daysLeft))
+                        : t("left", lang, st.daysLeft);
+
+            const pushBody = [
+                `【${t("secAle", lang)}】`,
+                `1. ${st.name}: ${dayStr} (${st.nextDueDate})\n${msg}`,
+            ]
+                .join("\n")
+                .trim();
+
+            const res = await Notifier.dispatch(targetChannels, title, pushBody);
+
+            await DataStore.saveLog(env, {
+                time: new Date().toISOString(),
+                trigger: "MANUAL",
+                content: [
+                    `[MANUAL_NOTIFY] ${st.name} | ${dayStr} (${st.nextDueDate})`,
+                    `[PUSH] ${res}`,
+                ],
+                actions: ["alert"],
+            });
+
+            if (
+                res.includes("FAIL") ||
+                res.includes("ERR") ||
+                res.includes("MISSING") ||
+                res.includes("NO_")
+            ) {
+                return error(res, 400);
+            }
+
+            return response({ code: 200, msg: res });
+        } catch (e) {
+            return error("NOTIFY_ERROR: " + e.message);
         }
     })
 );

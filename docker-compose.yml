@@ -12,7 +12,7 @@ services:
       - AUTH_PASSWORD=admin
       
       # 2. 设置 Cron 定时任务,不要修改！ / Setup Cron trigger DON'T CHANGE IT!
-      - CRON_SCHEDULE=0,30 * * * *
+      - CRON_SCHEDULE=*/5 * * * *
       
       # 3. 容器时区 (影响日志和本地时间计算)/ Setup your TIMEZONE
       - TZ=Asia/Shanghai
