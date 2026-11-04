@@ -2338,9 +2338,15 @@ export default {
         ctx.waitUntil(checkAndRenew(env, true));
     },
     async fetch(req, env, ctx) {
-        return app
-            .route(req, env)
-            .catch((err) => error("SERVER ERROR: " + err.message, 500));
+        try {
+            return await app.route(req, env);
+        } catch (err) {
+            console.error("[CRITICAL FETCH ERROR]", err);
+            return new Response("SERVER ERROR: " + (err.stack || err.message), {
+                status: 500,
+                headers: { "Content-Type": "text/plain; charset=utf-8" }
+            });
+        }
     },
 };
 
