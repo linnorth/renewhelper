@@ -5149,7 +5149,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 placeholder="Sign Key (Optional)"></el-input></el-form-item>
                     </div>
                     <div v-else-if="channelForm.type === 'wecom'" class="space-y-3">
-                        <el-form-item :label="lang === 'zh' ? 'Key' : 'Key'"><el-input v-model="channelForm.config.token" placeholder="Key (e.g. 693...)" ></el-input></el-form-item>
+                        <el-form-item :label="lang === 'zh' ? 'Key / Webhook' : 'Key / Webhook'"><el-input v-model="channelForm.config.token" :placeholder="lang === 'zh' ? '机器人 Key 或完整 Webhook URL' : 'Robot Key or Full Webhook URL'" ></el-input></el-form-item>
                     </div>
                     <div v-else-if="channelForm.type === 'resend'" class="space-y-3">
                         <el-form-item :label="t('lblApiKey')"><el-input

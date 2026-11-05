@@ -1105,34 +1105,46 @@ const Notifier = {
             return r.ok ? "OK" : "FAIL";
         },
         dingtalk: async (c, title, body) => {
-            if (!c.token) return "MISSING_CONF";
-            let url = `https://oapi.dingtalk.com/robot/send?access_token=${c.token}`;
-            if (c.secret) {
+            if (!c.token && !c.webhook) return "MISSING_CONF";
+            let raw = (c.token || c.webhook || "").trim();
+            let url = (raw.startsWith("http://") || raw.startsWith("https://"))
+                ? raw
+                : `https://oapi.dingtalk.com/robot/send?access_token=${raw}`;
+            if (c.secret && !url.includes("&sign=")) {
                 const timestamp = Date.now();
                 const str = `${timestamp}\n${c.secret}`;
                 const key = await crypto.subtle.importKey(
                     "raw", new TextEncoder().encode(c.secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
                 );
                 const sign = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(str)))));
-                url += `&timestamp=${timestamp}&sign=${encodeURIComponent(sign)}`;
+                const sep = url.includes("?") ? "&" : "?";
+                url += `${sep}timestamp=${timestamp}&sign=${encodeURIComponent(sign)}`;
             }
             const r = await fetch(url, {
                 method: "POST", headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ msgtype: "markdown", markdown: { title, text: `## ${title}\n\n${body}` } })
             });
-            return r.ok ? "OK" : "FAIL";
+            if (!r.ok) return `FAIL (HTTP ${r.status})`;
+            try {
+                const resJson = await r.json();
+                if (resJson.errcode && resJson.errcode !== 0) {
+                    return `FAIL (${resJson.errmsg || resJson.errcode})`;
+                }
+            } catch {}
+            return "OK";
         },
         lark: async (c, title, body) => {
-            // 支持旧版 Webhook URL 配置（兼容性）
             let url = c.webhook;
             let reqBody = {
                 msg_type: "text",
                 content: { text: `${title}\n\n${body}` },
             };
 
-            // 新版配置: Token + Secret
             if (c.token) {
-                url = `https://open.feishu.cn/open-apis/bot/v2/hook/${c.token}`;
+                let raw = c.token.trim();
+                url = (raw.startsWith("http://") || raw.startsWith("https://"))
+                    ? raw
+                    : `https://open.feishu.cn/open-apis/bot/v2/hook/${raw}`;
                 if (c.secret) {
                     const timestamp = Math.floor(Date.now() / 1000);
                     const stringToSign = `${timestamp}\n${c.secret}`;
@@ -1158,14 +1170,26 @@ const Notifier = {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(reqBody),
             });
-            return r.ok ? "OK" : "FAIL";
+            if (!r.ok) return `FAIL (HTTP ${r.status})`;
+            try {
+                const resJson = await r.json();
+                if (resJson.code && resJson.code !== 0) {
+                    return `FAIL (${resJson.msg || resJson.code})`;
+                }
+            } catch {}
+            return "OK";
         },
         wecom: async (c, title, body) => {
             let url = c.webhook;
             if (c.token) {
-                let key = c.token;
-                if (key.includes("key=")) key = key.split("key=")[1]; // Tolerance for full URL paste
-                url = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${key}`;
+                const raw = c.token.trim();
+                if (raw.startsWith("http://") || raw.startsWith("https://")) {
+                    url = raw;
+                } else if (raw.startsWith("key=")) {
+                    url = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${raw.slice(4)}`;
+                } else {
+                    url = `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${raw}`;
+                }
             }
             if (!url) return "MISSING_CONF";
 
@@ -1177,7 +1201,14 @@ const Notifier = {
                     text: { content: `${title}\n\n${body}` },
                 }),
             });
-            return r.ok ? "OK" : "FAIL";
+            if (!r.ok) return `FAIL (HTTP ${r.status})`;
+            try {
+                const resJson = await r.json();
+                if (resJson.errcode && resJson.errcode !== 0) {
+                    return `FAIL (${resJson.errmsg || resJson.errcode})`;
+                }
+            } catch {}
+            return "OK";
         },
     },
 };
