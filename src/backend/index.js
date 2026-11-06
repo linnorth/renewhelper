@@ -798,11 +798,12 @@ const Calc = {
     calcNextRepeatDate(repeat, rDateStr, cDateStr) {
         if (!repeat) return null;
 
-        const dtstart = this.parseYMD(cDateStr || rDateStr);
-        const baseObj = this.parseYMD(rDateStr);
-        if (!dtstart || Number.isNaN(dtstart.getTime()) || !baseObj || Number.isNaN(baseObj.getTime())) {
+        const cObj = this.parseYMD(cDateStr || rDateStr);
+        const baseObj = this.parseYMD(rDateStr || cDateStr);
+        if (!cObj || Number.isNaN(cObj.getTime()) || !baseObj || Number.isNaN(baseObj.getTime())) {
             return null;
         }
+        const dtstart = baseObj < cObj ? baseObj : cObj;
 
         const freq = repeat.freq || "monthly";
         const interval = Math.max(1, Number(repeat.interval) || 1);

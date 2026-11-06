@@ -105,8 +105,9 @@ const frontendCalc = {
     },
     calcNextRepeatDate(repeat, rDateStr, cDateStr) {
         if (!repeat) return null;
-        let dtstart = parseYMD(cDateStr || rDateStr);
-        let baseObj = parseYMD(rDateStr);
+        let cObj = parseYMD(cDateStr || rDateStr);
+        let baseObj = parseYMD(rDateStr || cDateStr);
+        let dtstart = baseObj < cObj ? baseObj : cObj;
         let freq = repeat.freq || "monthly";
         let interval = Math.max(1, Number(repeat.interval) || 1);
         let bymonthday = Array.isArray(repeat.bymonthday) ? repeat.bymonthday : (repeat.bymonthday ? [repeat.bymonthday] : null);
@@ -1627,7 +1628,7 @@ const getLocalToday = () => { try { const tz = settings.value.timezone || 'UTC';
 const saveItem = async () => {
     if (!form.value.name.trim()) return ElMessage.error(t('msg.nameReq'));
     if (list.value.some(i => i.name.toLowerCase() === form.value.name.toLowerCase() && i.id !== form.value.id)) return ElMessage.error(t('msg.nameExist'));
-    if (form.value.lastRenewDate < form.value.createDate) return ElMessage.error(t('msg.dateError'));
+    // 允许“上次续期”早于“创建时间”：创建时间记录真实建档日期，上次续期可回溯到之前的周期
     if (form.value.lastRenewDate > getLocalToday()) return ElMessage.error(t('msg.futureError'));
     if (form.value.renewUrl && form.value.renewUrl.trim() && !isSafeHttpUrl(form.value.renewUrl)) return ElMessage.error(t('msg.invalidUrl'));
 
@@ -2032,7 +2033,55 @@ const repeatUpcomingDates = computed(() => {
     } catch(e) { /* 计算异常 */ }
     return null;
 });
-const openAdd = () => { isEdit.value = false; const d = getLocalToday(); form.value = { id: Date.now().toString(), name: '', createDate: d, lastRenewDate: d, intervalDays: 30, cycleUnit: 'day', type: 'cycle', enabled: true, tags: [], useLunar: false, notifyDays: ['3'], notifyDaysList: [3], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: settings.value.defaultCurrency || 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '', repeat: { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] } }; dialogVisible.value = true; };
+// 根据“下次到期日”反推“上次续期日”(减去一个周期)
+const targetDueDate = ref('');
+const calcPrevFromDue = (dueStr) => {
+    if (!dueStr) return null;
+    const f = form.value;
+    const p = dueStr.split('-').map(Number);
+    if (f.type === 'repeat' && f.repeat) {
+        const step = Math.max(1, Number(f.repeat.interval) || 1);
+        const dt = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+        const freq = f.repeat.freq || 'monthly';
+        if (freq === 'daily') dt.setUTCDate(dt.getUTCDate() - step);
+        else if (freq === 'weekly') dt.setUTCDate(dt.getUTCDate() - step * 7);
+        else if (freq === 'yearly') dt.setUTCFullYear(dt.getUTCFullYear() - step);
+        else dt.setUTCMonth(dt.getUTCMonth() - step);
+        return dt.toISOString().split('T')[0];
+    }
+    const n = Number(f.intervalDays) || 1;
+    const unit = f.cycleUnit || 'day';
+    if (f.useLunar) {
+        const l = LUNAR.solar2lunar(p[0], p[1], p[2]);
+        if (!l) return null;
+        const pl = frontendCalc.addPeriod({ year: l.year, month: l.month, day: l.day, isLeap: l.isLeap }, -n, unit);
+        const s = frontendCalc.l2s(pl);
+        return `${s.year}-${String(s.month).padStart(2, '0')}-${String(s.day).padStart(2, '0')}`;
+    }
+    const dt = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+    if (unit === 'year') dt.setUTCFullYear(dt.getUTCFullYear() - n);
+    else if (unit === 'month') dt.setUTCMonth(dt.getUTCMonth() - n);
+    else dt.setUTCDate(dt.getUTCDate() - n);
+    return dt.toISOString().split('T')[0];
+};
+const applyTargetDueDate = () => {
+    if (!targetDueDate.value) return;
+    const prev = calcPrevFromDue(targetDueDate.value);
+    if (!prev) return;
+    if (prev > getLocalToday()) {
+        ElMessage.warning(lang.value === 'zh'
+            ? `反推的上次续期日 ${prev} 晚于今天，请检查周期时长或到期日`
+            : `Calculated last renew ${prev} is in the future, please check the cycle or due date`);
+        return;
+    }
+    form.value.lastRenewDate = prev;
+};
+// 周期/模式变化时，若已设置目标到期日则重新反推
+watch(() => [form.value.intervalDays, form.value.cycleUnit, form.value.useLunar, form.value.type, form.value.repeat?.freq, form.value.repeat?.interval], () => {
+    if (!isEdit.value && targetDueDate.value) applyTargetDueDate();
+});
+
+const openAdd = () => { isEdit.value = false; targetDueDate.value = ''; const d = getLocalToday(); form.value = { id: Date.now().toString(), name: '', createDate: d, lastRenewDate: d, intervalDays: 30, cycleUnit: 'day', type: 'cycle', enabled: true, tags: [], useLunar: false, notifyDays: ['3'], notifyDaysList: [3], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: settings.value.defaultCurrency || 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '', repeat: { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] } }; dialogVisible.value = true; };
 const editItem = (row) => { 
     isEdit.value = true; 
     let rObj = row.repeat ? JSON.parse(JSON.stringify(row.repeat)) : { freq: 'monthly', interval: 1, bymonth: [], bymonthday: [], byweekday: [], bysetpos: null, bycycleday: [] };
@@ -4344,6 +4393,22 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </span>
                             </div>
                         </div>
+                    </div>
+
+                    <div v-if="!isEdit" class="mb-4 p-3 rounded-sm border border-dashed border-blue-300 bg-blue-50/40 dark:bg-slate-800/50 dark:border-slate-600">
+                        <el-form-item class="!mb-0">
+                            <template #label>
+                                <div class="flex items-center gap-1">
+                                    <span>{{ lang === 'zh' ? '下次到期 / 提醒日 (可选)' : 'Next Due Date (Optional)' }}</span>
+                                    <el-tooltip :content="lang === 'zh' ? '直接填入下次要提醒的日期（如 2026-11-22），系统将按周期自动反推「上次续期」，「创建时间」保持为今天的真实建档日期。' : 'Enter the next due date; Last Renew is calculated backwards by the cycle, Create Date stays as today.'" placement="top">
+                                        <span class="text-amber-500 cursor-help">&#9432;</span>
+                                    </el-tooltip>
+                                </div>
+                            </template>
+                            <el-date-picker v-model="targetDueDate" type="date" value-format="YYYY-MM-DD" style="width:100%" class="!w-full"
+                                clearable :placeholder="lang === 'zh' ? '例如每月22号提醒，选择最近的 22 号' : 'e.g. pick the coming 22nd'"
+                                @change="applyTargetDueDate"></el-date-picker>
+                        </el-form-item>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
