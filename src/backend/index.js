@@ -1048,11 +1048,20 @@ const Notifier = {
                 : `https://www.notifyx.cn/api/v1/send/${raw}`;
             let description = "Alert";
             const content = body.replace(/\n/g, "\n\n");
-            const r = await fetch(url, {
+            const sendReq = () => fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title, content, description }),
             });
+            let r = await sendReq();
+            if (r.status === 429) {
+                const sec = new Date().getUTCSeconds();
+                const waitMs = ((60 - sec) + 1) * 1000;
+                if (waitMs <= 32000) {
+                    await new Promise((resolve) => setTimeout(resolve, waitMs));
+                    r = await sendReq();
+                }
+            }
             if (!r.ok) {
                 try {
                     const errJson = await r.json();
