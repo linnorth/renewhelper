@@ -1042,14 +1042,30 @@ const Notifier = {
         },
         notifyx: async (c, title, body) => {
             if (!c.apiKey) return "MISSING_CONF";
+            const raw = c.apiKey.trim();
+            const url = (raw.startsWith("http://") || raw.startsWith("https://"))
+                ? raw
+                : `https://www.notifyx.cn/api/v1/send/${raw}`;
             let description = "Alert";
             const content = body.replace(/\n/g, "\n\n");
-            const r = await fetch(`https://www.notifyx.cn/api/v1/send/${c.apiKey}`, {
+            const r = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title, content, description }),
             });
-            return r.ok ? "OK" : "FAIL";
+            if (!r.ok) {
+                try {
+                    const errJson = await r.json();
+                    return `FAIL (${errJson.error || errJson.message || errJson.msg || r.status})`;
+                } catch {
+                    return `FAIL (HTTP ${r.status})`;
+                }
+            }
+            try {
+                const resJson = await r.json();
+                if (resJson.error) return `FAIL (${resJson.error})`;
+            } catch {}
+            return "OK";
         },
         resend: async (c, title, body) => {
             if (!c.apiKey || !c.to || !c.from) return "MISSING_CONF";

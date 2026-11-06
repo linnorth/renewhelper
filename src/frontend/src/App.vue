@@ -5128,7 +5128,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                     </div>
                     <div v-else-if="channelForm.type === 'notifyx'">
                         <el-form-item :label="t('lblApiKey')"><el-input
-                                v-model="channelForm.config.apiKey"></el-input></el-form-item>
+                                v-model="channelForm.config.apiKey" :placeholder="lang === 'zh' ? 'mgo_... 或完整推送 URL' : 'mgo_... or Full Push URL'"></el-input></el-form-item>
                     </div>
                     <div v-else-if="channelForm.type === 'gotify'" class="space-y-3">
                         <el-form-item :label="t('lblServer')"><el-input
