@@ -1665,8 +1665,8 @@ const saveItem = async () => {
             endDate = formatLocalYMD(new Date(Date.UTC(y, m, d)));
         }
 
-        // 使用 startDate(即 lastRenewDate) 的 0点作为操作时间
-        const renewDate = startDate + ' 00:00:00';
+        // 使用 createDate(真实建档日期) 的 0点作为操作时间
+        const renewDate = (form.value.createDate || startDate) + ' 00:00:00';
 
         form.value.renewHistory = [{
             renewDate: renewDate,
@@ -4428,7 +4428,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </div>
                             </template>
                             <el-date-picker v-if="form.useLunar" v-model="form.createDate" type="date"
-                                value-format="YYYY-MM-DD" style="width:100%" class="!w-full" :disabled="isEdit"
+                                value-format="YYYY-MM-DD" style="width:100%" class="!w-full"
                                 popper-class="lunar-popper"><template #default="c">
                                     <div class="lunar-cell"><el-tooltip :content="getLunarTooltip(c)" placement="top"
                                             :hide-after="0" :enterable="false">
@@ -4441,7 +4441,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                     </div>
                                 </template></el-date-picker>
                             <el-date-picker v-else v-model="form.createDate" type="date" value-format="YYYY-MM-DD"
-                                style="width:100%" class="!w-full" :disabled="isEdit"
+                                style="width:100%" class="!w-full"
                                 popper-class="lunar-popper"><template #default="c">
                                     <div class="lunar-cell">
                                         <div class="view-date"><span class="solar font-bold">{{ c.text }}</span></div>
