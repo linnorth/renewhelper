@@ -478,12 +478,22 @@ const editingChannelIndex = ref(-1);
 
 const channelTypes = ['telegram', 'bark', 'pushplus', 'dingtalk', 'lark', 'wecom', 'serverchan3', 'notifyx', 'resend', 'webhook', 'gotify', 'ntfy'];
 
+const getUniqueChannelName = (type) => {
+    const existing = settingsForm.value?.channels || [];
+    let name = '';
+    let attempts = 0;
+    do {
+        const randomNum = Math.floor(Math.random() * 900 + 100);
+        name = `${type}${randomNum}`;
+        attempts++;
+    } while (attempts < 50 && existing.some(c => c.name === name));
+    return name;
+};
+
 const onChannelTypeChange = () => {
     // Reset config when type changes
     channelForm.value.config = {};
-    // Auto-update name: "Type + 3 Random Digits"
-    const randomNum = Math.floor(Math.random() * 900 + 100);
-    channelForm.value.name = channelForm.value.type + randomNum;
+    channelForm.value.name = getUniqueChannelName(channelForm.value.type);
 };
 
 const getChannelSummary = (ch) => {
@@ -501,8 +511,8 @@ const getChannelSummary = (ch) => {
 };
 
 const openAddChannel = () => {
-    const randomNum = Math.floor(Math.random() * 900 + 100);
-    channelForm.value = { id: '', type: 'telegram', name: 'telegram' + randomNum, config: {}, enable: true };
+    const name = getUniqueChannelName('telegram');
+    channelForm.value = { id: '', type: 'telegram', name, config: {}, enable: true };
     editingChannelIndex.value = -1;
     channelDialogVisible.value = true;
 };
@@ -798,13 +808,15 @@ const removeCalendarSubscription = async (sub) => {
 
 const saveChannel = () => {
     if (!channelForm.value.type) return;
-    if (!channelForm.value.name) return ElMessage.error(t('msg.nameReq'));
+    const name = (channelForm.value.name || '').trim();
+    if (!name) return ElMessage.error(t('msg.nameReq'));
+    channelForm.value.name = name;
 
     // Check duplicate name
     const existing = settingsForm.value.channels || [];
-    const isDuplicate = existing.some(c => c.name === channelForm.value.name && c.id !== channelForm.value.id);
+    const isDuplicate = existing.some(c => c.name === name && c.id !== channelForm.value.id);
     if (isDuplicate) {
-        return ElMessage.error(lang.value === 'zh' ? '渠道名称已存在' : 'Channel name already exists');
+        return ElMessage.warning(lang.value === 'zh' ? `渠道名称「${name}」已存在，请修改为不同的名称` : 'Channel name already exists, please use a unique name');
     }
 
     const newCh = JSON.parse(JSON.stringify(channelForm.value));
@@ -813,6 +825,7 @@ const saveChannel = () => {
         // Edit
         const realIdx = settingsForm.value.channels.findIndex(c => c.id === newCh.id);
         if (realIdx !== -1) settingsForm.value.channels[realIdx] = newCh;
+        ElMessage.success(lang.value === 'zh' ? '渠道已修改，请点击弹窗下方的「保存配置」使修改生效' : 'Channel updated. Click "Save Settings" below to persist.');
     } else {
         // Add
         newCh.id = generateUUID();
@@ -822,6 +835,7 @@ const saveChannel = () => {
         if (channelLimit.value < settingsForm.value.channels.length) {
             channelLimit.value = settingsForm.value.channels.length;
         }
+        ElMessage.success(lang.value === 'zh' ? '渠道已添加，请记得点击弹窗下方的「保存配置」使修改生效' : 'Channel added. Remember to click "Save Settings" below to persist.');
     }
     channelDialogVisible.value = false;
 };
