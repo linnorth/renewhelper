@@ -2,6 +2,7 @@ name = "renewhelper"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
+keep_vars = true
 
 # 绑定 KV 数据库
 [[kv_namespaces]]
@@ -14,10 +15,10 @@ id = "80902dba39de4a81b4ce8c519cc7d2d8"
 [triggers]
 crons = ["*/5 * * * *"]
 
-# 环境变量默认值 (可选)
-# 部署时通常会提示用户输入，这里作为默认值
-[vars]
-AUTH_PASSWORD = "admin"
+# 环境变量请在 Cloudflare Workers 后台「设置 -> 变量和机密」中直接修改 AUTH_PASSWORD
+# 开启 keep_vars = true 后，后续代码部署不会覆盖您在后台设置的密码
+# [vars]
+# AUTH_PASSWORD = "admin"
 
 [env.production]
 name = "renewhelper"
