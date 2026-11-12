@@ -4396,12 +4396,12 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                 </div>
             </div>
 
-            <el-dialog v-model="dialogVisible" :title="isEdit ? t('editService') : t('newService')" width="750px"
+            <el-dialog v-model="dialogVisible" :title="isEdit ? t('editService') : t('newService')" width="800px"
                 align-center class="!rounded-none mecha-panel compact-service-dialog"
                 style="clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);">
                 <el-form :model="form" label-position="top">
-                    <!-- 第一行：名称 + 标签 + 账单额 + 币种 紧凑并排 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 mb-2.5">
+                    <!-- 第一行：名称 + 标签 + 账单额 + 币种 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
                         <el-form-item class="!mb-0 sm:col-span-5">
                             <template #label>
                                 <div class="flex items-center gap-1">
@@ -4425,10 +4425,10 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                         </el-form-item>
 
                         <el-form-item :label="`${t('fixedPrice')} / ${t('currency')}`" class="!mb-0 sm:col-span-3">
-                            <div class="flex gap-1 w-full">
+                            <div class="flex gap-1.5 w-full">
                                 <el-input-number v-model="form.fixedPrice" :min="0" :precision="2"
                                     class="!flex-1 min-w-0" controls-position="right"></el-input-number>
-                                <el-select v-model="form.currency" filterable style="width: 74px" class="shrink-0">
+                                <el-select v-model="form.currency" filterable style="width: 78px" class="shrink-0">
                                     <el-option v-for="c in currencyList" :key="c" :label="c" :value="c"></el-option>
                                 </el-select>
                             </div>
@@ -4436,8 +4436,8 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                     </div>
 
                     <!-- 第二行：推送渠道（全部平铺显示，点击直接切换，绝不折叠） -->
-                    <div class="mb-2.5 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                    <div class="mb-3 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <el-icon class="text-blue-600 dark:text-blue-400 text-sm"><Promotion /></el-icon>
                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('selectChannels') }}</span>
@@ -4475,8 +4475,8 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                     </div>
 
                     <!-- 第三行：模式选择 + 周期时长 + 农历周期 + 下次到期/提醒日 并列同行 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end mb-2.5">
-                        <div :class="form.type === 'repeat' ? 'sm:col-span-6' : 'sm:col-span-5'">
+                    <div :class="form.type === 'repeat' ? 'grid grid-cols-1 sm:grid-cols-12 gap-3 items-end mb-3' : 'grid grid-cols-1 sm:grid-cols-[265px_225px_1fr] gap-3 items-end mb-3'">
+                        <div :class="form.type === 'repeat' ? 'sm:col-span-6' : ''">
                             <div class="text-xs text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1">
                                 <span>{{ t('formType') }}</span>
                                 <span class="text-red-500 font-bold">*</span>
@@ -4491,14 +4491,14 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </div>
                         </div>
 
-                        <el-form-item v-show="form.type !== 'repeat'" class="!mb-0 sm:col-span-3">
+                        <el-form-item v-show="form.type !== 'repeat'" class="!mb-0">
                             <template #label>
-                                <div class="flex items-center justify-between w-full">
-                                    <div class="flex items-center gap-1">
+                                <div class="flex items-center justify-between w-full gap-2">
+                                    <div class="flex items-center gap-1 shrink-0">
                                         <span>{{ t('interval') }}</span>
                                         <span class="text-red-500 font-bold">*</span>
                                     </div>
-                                    <div class="flex items-center gap-1 cursor-pointer" @click="form.useLunar = !form.useLunar">
+                                    <div class="flex items-center gap-1.5 cursor-pointer shrink-0" @click="form.useLunar = !form.useLunar">
                                         <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ t('useLunar') }}</span>
                                         <el-switch v-model="form.useLunar" size="small" style="--el-switch-on-color:#2563eb;" @click.stop></el-switch>
                                     </div>
@@ -4506,7 +4506,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </template>
                             <el-input v-model.number="form.intervalDays" type="number" :min="1">
                                 <template #append>
-                                    <el-select v-model="form.cycleUnit" style="width:64px" :teleported="false">
+                                    <el-select v-model="form.cycleUnit" style="width:66px" :teleported="false">
                                         <el-option :label="t('unit.day')" value="day"></el-option>
                                         <el-option :label="t('unit.month')" value="month"></el-option>
                                         <el-option :label="t('unit.year')" value="year"></el-option>
@@ -4515,7 +4515,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </el-input>
                         </el-form-item>
 
-                        <el-form-item class="!mb-0" :class="form.type === 'repeat' ? 'sm:col-span-6' : 'sm:col-span-4'">
+                        <el-form-item class="!mb-0" :class="form.type === 'repeat' ? 'sm:col-span-6' : ''">
                             <template #label>
                                 <div class="flex items-center gap-1">
                                     <span>{{ lang === 'zh' ? '下次到期 / 提醒日 (自动反推)' : 'Target Due Date (Auto)' }}</span>
@@ -4595,7 +4595,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                     </div>
 
                     <!-- 第四行：创建时间 + 上次续期 + 下次到期计算结果 三列同行 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end mb-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end mb-3">
                         <el-form-item class="!mb-0 sm:col-span-4">
                             <template #label>
                                 <div class="flex items-center gap-1">
@@ -4672,9 +4672,9 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                         </div>
                     </div>
 
-                    <!-- 第五行：🔔 提醒规则卡片 (双列紧凑平铺规则 + 单行平铺提醒时间) -->
-                    <div class="mb-2.5 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1.5 border-b border-slate-200/80 dark:border-slate-700">
+                    <!-- 第五行：🔔 提醒规则（独立全宽块；每条规则单独占一行，提醒时间单独占一行） -->
+                    <div class="mb-3 p-3 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-200/80 dark:border-slate-700">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <el-icon class="text-indigo-600 dark:text-indigo-400 text-sm"><Bell /></el-icon>
                                 <span class="font-bold text-xs text-slate-800 dark:text-slate-100">{{ lang === 'zh' ? '提醒规则' : 'Reminder Rules' }}</span>
@@ -4682,7 +4682,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </div>
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 <el-button size="small" class="!h-6 !px-2 !text-xs" plain @click="applyPresetNotifyRules([7, 3, 1, 0])">
-                                    <el-icon class="mr-0.5"><Edit /></el-icon>{{ lang === 'zh' ? '预设(7/3/1/当天)' : '7/3/1/Today' }}
+                                    <el-icon class="mr-0.5"><Edit /></el-icon>{{ lang === 'zh' ? '应用预设(7/3/1/当天)' : 'Preset 7/3/1/Today' }}
                                 </el-button>
                                 <el-button size="small" class="!h-6 !px-2 !text-xs" plain @click="applyPresetNotifyRules([0])">
                                     {{ lang === 'zh' ? '仅当天' : 'Today Only' }}
@@ -4693,34 +4693,41 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </div>
                         </div>
 
-                        <!-- 规则列表（双列网格平铺，省空间且绝不折叠） -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2">
+                        <!-- 规则列表（每条规则单独一行，舒展不拥挤） -->
+                        <div class="flex flex-col gap-1.5 mb-2.5">
                             <div v-for="(rule, rIdx) in form.notifyRules" :key="'nrule-' + rIdx"
-                                class="flex items-center justify-between gap-1.5 px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80"
+                                class="flex items-center justify-between gap-3 px-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80"
                                 :class="{ 'opacity-60': !rule.enabled }">
-                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                <div class="flex items-center gap-2.5 flex-wrap flex-1 min-w-0">
                                     <el-checkbox v-model="rule.enabled" size="small" @change="syncNotifyDaysFromRules">
                                         <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ lang === 'zh' ? '启用' : 'On' }}</span>
                                     </el-checkbox>
-                                    <el-select v-model="rule.type" size="small" style="width: 92px" @change="onRuleTypeChange(rule)">
+                                    <el-select v-model="rule.type" size="small" style="width: 108px" @change="onRuleTypeChange(rule)">
                                         <el-option :label="lang === 'zh' ? '到期前' : 'Before'" value="before" />
                                         <el-option :label="lang === 'zh' ? '到期当天' : 'Today'" value="today" />
                                         <el-option :label="lang === 'zh' ? '到期后' : 'After'" value="after" />
                                     </el-select>
                                     <el-input-number v-model="rule.days" size="small" :min="rule.type === 'today' ? 0 : 1" :max="3650"
-                                        :disabled="rule.type === 'today'" controls-position="right" style="width: 78px"
+                                        :disabled="rule.type === 'today'" controls-position="right" style="width: 92px"
                                         @change="syncNotifyDaysFromRules" />
-                                    <span class="text-xs text-slate-500 dark:text-slate-400 shrink-0">{{ lang === 'zh' ? '天' : 'd' }}</span>
+                                    <span class="text-xs text-slate-600 dark:text-slate-300 shrink-0">{{ lang === 'zh' ? '天' : 'd' }}</span>
+                                    <span class="hidden sm:inline-block text-[11px] text-slate-400 font-mono">
+                                        {{ rule.type === 'before'
+                                            ? (lang === 'zh' ? `· 剩余 ${rule.days} 天时触发提醒` : `· Triggers at ${rule.days}d left`)
+                                            : rule.type === 'today'
+                                                ? (lang === 'zh' ? '· 到期当天触发提醒' : '· Triggers on due day')
+                                                : (lang === 'zh' ? `· 已过期 ${rule.days} 天时触发提醒` : `· Triggers ${rule.days}d overdue`) }}
+                                    </span>
                                 </div>
                                 <el-button type="danger" link size="small" :icon="Delete" @click="removeNotifyRule(rIdx)"
                                     :title="lang === 'zh' ? '删除此规则' : 'Remove rule'" />
                             </div>
                         </div>
 
-                        <!-- ⏰ 提醒时间（单栏紧凑平铺标签 + 快捷点选 + 自定义输入） -->
-                        <div class="px-2.5 py-1.5 rounded border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900/80 flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <div class="flex items-center gap-1 mr-1">
+                        <!-- ⏰ 提醒时间（单独占一行，舒展平铺 + 快捷点选） -->
+                        <div class="px-3 py-2 rounded border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900/80 flex flex-wrap items-center justify-between gap-2.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="flex items-center gap-1 mr-0.5">
                                     <el-icon class="text-blue-600 dark:text-blue-400 text-xs"><AlarmClock /></el-icon>
                                     <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('lblNotifyTime') }}:</span>
                                 </div>
@@ -4732,17 +4739,17 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </el-tag>
                                 <el-select v-model="newNotifyTimeInput" filterable allow-create default-first-option
                                     clearable :reserve-keyword="false"
-                                    :placeholder="lang === 'zh' ? '+ 添加时间(08:15)' : '+ Time'"
-                                    style="width: 135px" size="small"
+                                    :placeholder="lang === 'zh' ? '+ 添加时间(如 08:15)' : '+ Time (08:15)'"
+                                    style="width: 150px" size="small"
                                     @change="addCustomNotifyTime">
                                     <el-option v-for="tOpt in notifyTimeOptions" :key="'opt-' + tOpt" :label="tOpt" :value="tOpt" />
                                 </el-select>
                             </div>
-                            <div class="flex items-center gap-1 flex-wrap">
-                                <span class="text-[11px] text-slate-400">{{ lang === 'zh' ? '快捷:' : 'Quick:' }}</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[11px] text-slate-400">{{ lang === 'zh' ? '快捷点选:' : 'Quick:' }}</span>
                                 <button v-for="presetT in notifyTimeQuickPresets" :key="'qp-' + presetT" type="button"
                                     @click="toggleQuickNotifyTime(presetT)"
-                                    :class="['px-1.5 py-0.5 text-[11px] font-mono font-bold rounded border transition-all cursor-pointer',
+                                    :class="['px-2 py-0.5 text-[11px] font-mono font-bold rounded border transition-all cursor-pointer',
                                         (form.notifyTime || []).includes(presetT)
                                             ? 'bg-blue-600 text-white border-blue-600'
                                             : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400']">
@@ -4752,30 +4759,37 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                         </div>
                     </div>
 
-                    <!-- 第六行：自动续期 + 备注信息 + 续费链接 紧凑同行 -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
-                        <div class="sm:col-span-4">
-                            <div class="text-xs text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
-                                <span>{{ t('policyAuto') }}</span>
-                                <span v-if="form.autoRenew" class="text-[11px] text-slate-400">{{ t('policyRenewDay') }}</span>
-                            </div>
-                            <div class="h-[32px] px-2.5 rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-1.5">
-                                    <el-switch v-model="form.autoRenew" size="small" style="--el-switch-on-color:#2563eb;"></el-switch>
-                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ form.autoRenew ? (lang === 'zh' ? '自动续期' : 'Auto') : (lang === 'zh' ? '过期停用' : 'Disable') }}</span>
-                                </div>
-                                <el-input-number v-if="form.autoRenew" v-model="form.autoRenewDays" size="small" :min="0" controls-position="right" style="width: 76px"></el-input-number>
-                            </div>
+                    <!-- 第六行：自动续期策略（简洁单行横排） -->
+                    <div class="mb-3 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('policyAuto') }}</span>
+                            <el-switch v-model="form.autoRenew" size="small" style="--el-switch-on-color:#2563eb;"></el-switch>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                {{ form.autoRenew
+                                    ? (lang === 'zh' ? '到期后自动延续下一周期' : 'Auto renew cycle on expiry')
+                                    : (lang === 'zh' ? '到期后不自动续期，超期停用' : 'Disable after expiry') }}
+                            </span>
                         </div>
-
-                        <el-form-item :label="t('note')" class="!mb-0 sm:col-span-4">
-                            <el-input v-model="form.message" :placeholder="lang === 'zh' ? '可选备注信息...' : 'Optional note...'" clearable></el-input>
-                        </el-form-item>
-
-                        <el-form-item :label="t('renewUrl')" class="!mb-0 sm:col-span-4">
-                            <el-input v-model="form.renewUrl" :placeholder="t('renewUrlPlaceholder')" clearable></el-input>
-                        </el-form-item>
+                        <div v-if="form.autoRenew" class="flex items-center gap-2">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('policyRenewDay') }}:</span>
+                            <el-input-number v-model="form.autoRenewDays" size="small" :min="0" controls-position="right" style="width: 86px"></el-input-number>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ lang === 'zh' ? '天' : 'd' }}</span>
+                        </div>
                     </div>
+
+                    <!-- 第七行：续费链接（单独占一行，完整显示长链接） -->
+                    <el-form-item :label="t('renewUrl')" class="!mb-3">
+                        <el-input v-model="form.renewUrl" :placeholder="t('renewUrlPlaceholder')" clearable>
+                            <template #prefix><el-icon><Link /></el-icon></template>
+                        </el-input>
+                    </el-form-item>
+
+                    <!-- 第八行：备注信息（单独占一行，留大一点的多行文本框） -->
+                    <el-form-item :label="t('note')" class="!mb-0">
+                        <el-input v-model="form.message" type="textarea" :rows="3"
+                            :autosize="{ minRows: 3, maxRows: 5 }"
+                            :placeholder="lang === 'zh' ? '填写备注信息（支持多行输入，如账号信息、续费注意事项等）...' : 'Optional multi-line note...'"></el-input>
+                    </el-form-item>
                 </el-form>
 
                 <template #footer>

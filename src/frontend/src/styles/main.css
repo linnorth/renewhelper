@@ -826,19 +826,23 @@ html.dark .lunar-popper .el-month-table td .cell {
 }
 
 .compact-service-dialog .el-dialog__header {
-    padding: 12px 16px 8px !important;
+    padding: 12px 18px 8px !important;
 }
 
 .compact-service-dialog .el-dialog__body {
-    padding: 8px 16px 10px !important;
+    padding: 8px 18px 12px !important;
+    max-height: calc(92vh - 108px);
+    overflow-y: auto;
 }
 
 .compact-service-dialog .el-dialog__footer {
-    padding: 8px 16px 12px !important;
+    padding: 8px 18px 12px !important;
 }
 
 .compact-service-dialog .el-form-item__label {
-    margin-bottom: 3px !important;
+    margin-bottom: 4px !important;
+    padding-right: 0 !important;
+    width: 100% !important;
     line-height: 1.25 !important;
     font-size: 12px !important;
 }
