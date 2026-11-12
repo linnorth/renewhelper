@@ -520,6 +520,21 @@ const toggleQuickNotifyTime = (tStr) => {
         form.value.notifyTime = Array.from(new Set([...cur, tStr])).sort();
     }
 };
+const toggleFormChannel = (chId) => {
+    if (!Array.isArray(form.value.notifyChannelIds)) form.value.notifyChannelIds = [];
+    const idx = form.value.notifyChannelIds.indexOf(chId);
+    if (idx >= 0) {
+        form.value.notifyChannelIds.splice(idx, 1);
+    } else {
+        form.value.notifyChannelIds.push(chId);
+    }
+};
+const selectAllFormChannels = () => {
+    form.value.notifyChannelIds = (settings.value.channels || []).map(c => c.id);
+};
+const clearFormChannels = () => {
+    form.value.notifyChannelIds = [];
+};
 const DEFAULT_CALENDAR_SUBSCRIPTION_ID = 'default';
 const settingsForm = ref({
     notifyUrl: '',
@@ -4381,75 +4396,117 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                 </div>
             </div>
 
-            <el-dialog v-model="dialogVisible" :title="isEdit ? t('editService') : t('newService')" width="680px"
-                align-center class="!rounded-none mecha-panel"
+            <el-dialog v-model="dialogVisible" :title="isEdit ? t('editService') : t('newService')" width="750px"
+                align-center class="!rounded-none mecha-panel compact-service-dialog"
                 style="clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);">
                 <el-form :model="form" label-position="top">
-                    <el-form-item>
-                        <template #label>
-                            <div class="flex items-center gap-1">
-                                <span>{{ t('formName') }}</span>
-                                <el-tooltip :content="lang === 'zh' ? '填写服务的名称标识以供识别，为必填项。' : 'Identifier of the service, required.'" placement="top">
-                                    <span class="text-red-500 cursor-help font-bold">*</span>
-                                </el-tooltip>
-                            </div>
-                        </template>
-                        <el-input v-model="form.name" size="large"><template
-                                #prefix><el-icon>
-                                    <Monitor />
-                                </el-icon></template></el-input></el-form-item>
-                    <el-form-item :label="t('tags')"><el-select v-model="form.tags" multiple filterable clearable allow-create
-                            default-first-option :reserve-keyword="false" :placeholder="t('tagPlaceholder')"
-                            style="width:100%" size="large"><el-option v-for="tag in allTags" :key="tag" :label="tag"
-                                :value="tag"></el-option></el-select></el-form-item>
-
-                    <!-- NEW Channel Selection -->
-                    <el-form-item :label="t('selectChannels')">
-                        <el-select v-model="form.notifyChannelIds" multiple filterable clearable collapse-tags :max-collapse-tags="3" collapse-tags-tooltip style="width:100%" size="large"
-                            :placeholder="t('selectChannels')">
-                            <el-option v-for="ch in (settings.channels || [])" :key="ch.id" :label="ch.name"
-                                :value="ch.id">
-                                <span style="float: left">{{ ch.name }}</span>
-                                <span style="float: right; color: #8492a6; font-size: 13px">{{ getChannelName(ch.type) }}</span>
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <el-form-item :label="t('fixedPrice')" class="!mb-0"><el-input-number v-model="form.fixedPrice"
-                                :min="0" :precision="2" class="!w-full"
-                                controls-position="right"></el-input-number></el-form-item>
-                        <el-form-item :label="t('currency')" class="!mb-0"><el-select v-model="form.currency" filterable
-                                class="!w-full"><el-option v-for="c in currencyList" :key="c" :label="c"
-                                    :value="c"></el-option></el-select></el-form-item>
-                    </div>
-
-                    <!-- 第一行：模式标签 + 选择按钮同行 -->
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap flex items-center gap-1">{{ t('formType') }}<el-tooltip :content="lang === 'zh' ? '选择服务的计费模式：循环订阅、到期重置或固定重复，为必填项。' : 'Select the billing mode: Cycle, Reset or Repeat, required.'" placement="top"><span class="text-red-500 cursor-help font-bold">*</span></el-tooltip></span>
-                        <div class="radio-group-fix flex-1">
-                            <div class="radio-item" :class="{ active: form.type === 'cycle' }"
-                                @click="form.type = 'cycle'">📅 {{ t('cycle') }}</div>
-                            <div class="radio-item" :class="{ active: form.type === 'reset' }"
-                                @click="form.type = 'reset'">⏳ {{ t('reset') }}</div>
-                            <div class="radio-item" :class="{ active: form.type === 'repeat' }"
-                                @click="form.type = 'repeat'">🔁 {{ t('typeRepeat') }}</div>
-                        </div>
-                    </div>
-                    <!-- 第二行：周期时长 + 农历开关 -->
-                    <div class="flex items-end gap-4 mb-4" v-show="form.type !== 'repeat'">
-                        <el-form-item class="!mb-0 flex-1">
+                    <!-- 第一行：名称 + 标签 + 账单额 + 币种 紧凑并排 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 mb-2.5">
+                        <el-form-item class="!mb-0 sm:col-span-5">
                             <template #label>
                                 <div class="flex items-center gap-1">
-                                    <span>{{ t('interval') }}</span>
-                                    <el-tooltip :content="lang === 'zh' ? '服务每次续订的固定时长，为必填项。' : 'Duration of each subscription period, required.'" placement="top">
+                                    <span>{{ t('formName') }}</span>
+                                    <el-tooltip :content="lang === 'zh' ? '填写服务的名称标识以供识别，为必填项。' : 'Identifier of the service, required.'" placement="top">
                                         <span class="text-red-500 cursor-help font-bold">*</span>
                                     </el-tooltip>
                                 </div>
                             </template>
+                            <el-input v-model="form.name">
+                                <template #prefix><el-icon><Monitor /></el-icon></template>
+                            </el-input>
+                        </el-form-item>
+
+                        <el-form-item :label="t('tags')" class="!mb-0 sm:col-span-4">
+                            <el-select v-model="form.tags" multiple filterable clearable allow-create
+                                default-first-option :reserve-keyword="false" :placeholder="t('tagPlaceholder')"
+                                style="width:100%">
+                                <el-option v-for="tag in allTags" :key="tag" :label="tag" :value="tag"></el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item :label="`${t('fixedPrice')} / ${t('currency')}`" class="!mb-0 sm:col-span-3">
+                            <div class="flex gap-1 w-full">
+                                <el-input-number v-model="form.fixedPrice" :min="0" :precision="2"
+                                    class="!flex-1 min-w-0" controls-position="right"></el-input-number>
+                                <el-select v-model="form.currency" filterable style="width: 74px" class="shrink-0">
+                                    <el-option v-for="c in currencyList" :key="c" :label="c" :value="c"></el-option>
+                                </el-select>
+                            </div>
+                        </el-form-item>
+                    </div>
+
+                    <!-- 第二行：推送渠道（全部平铺显示，点击直接切换，绝不折叠） -->
+                    <div class="mb-2.5 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <el-icon class="text-blue-600 dark:text-blue-400 text-sm"><Promotion /></el-icon>
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('selectChannels') }}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5" v-if="(settings.channels || []).length > 0">
+                                <span class="text-[11px] font-mono text-blue-600 dark:text-blue-400">
+                                    {{ (form.notifyChannelIds || []).length === 0
+                                        ? (lang === 'zh' ? '当前: 默认推送全部启用渠道' : 'Default: All Enabled')
+                                        : (lang === 'zh' ? `已指定 ${(form.notifyChannelIds || []).length} 个渠道` : `${(form.notifyChannelIds || []).length} Selected`) }}
+                                </span>
+                                <el-button size="small" class="!h-5 !px-1.5 !text-[11px]" plain @click="selectAllFormChannels">
+                                    {{ lang === 'zh' ? '全选' : 'All' }}
+                                </el-button>
+                                <el-button size="small" class="!h-5 !px-1.5 !text-[11px]" plain @click="clearFormChannels">
+                                    {{ lang === 'zh' ? '清空(默认全部)' : 'Clear' }}
+                                </el-button>
+                            </div>
+                        </div>
+                        <div v-if="(settings.channels || []).length > 0" class="flex flex-wrap gap-1.5">
+                            <button v-for="ch in (settings.channels || [])" :key="'fch-' + ch.id" type="button"
+                                @click="toggleFormChannel(ch.id)"
+                                :class="['inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border transition-all cursor-pointer select-none',
+                                    (form.notifyChannelIds || []).includes(ch.id)
+                                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                                        : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-blue-400']">
+                                <span class="font-mono text-[11px] font-bold">{{ (form.notifyChannelIds || []).includes(ch.id) ? '✓' : '+' }}</span>
+                                <span class="font-bold">{{ ch.name }}</span>
+                                <span :class="['text-[10px] px-1 py-0 rounded',
+                                    (form.notifyChannelIds || []).includes(ch.id)
+                                        ? 'bg-blue-500/50 text-blue-50'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-400']">{{ getChannelName(ch.type) }}</span>
+                            </button>
+                        </div>
+                        <div v-else class="text-xs text-slate-400">{{ t('noChannels') }}</div>
+                    </div>
+
+                    <!-- 第三行：模式选择 + 周期时长 + 农历周期 + 下次到期/提醒日 并列同行 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end mb-2.5">
+                        <div :class="form.type === 'repeat' ? 'sm:col-span-6' : 'sm:col-span-5'">
+                            <div class="text-xs text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                <span>{{ t('formType') }}</span>
+                                <span class="text-red-500 font-bold">*</span>
+                            </div>
+                            <div class="radio-group-fix">
+                                <div class="radio-item !text-xs" :class="{ active: form.type === 'cycle' }"
+                                    @click="form.type = 'cycle'">📅 {{ t('cycle') }}</div>
+                                <div class="radio-item !text-xs" :class="{ active: form.type === 'reset' }"
+                                    @click="form.type = 'reset'">⏳ {{ t('reset') }}</div>
+                                <div class="radio-item !text-xs" :class="{ active: form.type === 'repeat' }"
+                                    @click="form.type = 'repeat'">🔁 {{ t('typeRepeat') }}</div>
+                            </div>
+                        </div>
+
+                        <el-form-item v-show="form.type !== 'repeat'" class="!mb-0 sm:col-span-3">
+                            <template #label>
+                                <div class="flex items-center justify-between w-full">
+                                    <div class="flex items-center gap-1">
+                                        <span>{{ t('interval') }}</span>
+                                        <span class="text-red-500 font-bold">*</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 cursor-pointer" @click="form.useLunar = !form.useLunar">
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ t('useLunar') }}</span>
+                                        <el-switch v-model="form.useLunar" size="small" style="--el-switch-on-color:#2563eb;" @click.stop></el-switch>
+                                    </div>
+                                </div>
+                            </template>
                             <el-input v-model.number="form.intervalDays" type="number" :min="1">
                                 <template #append>
-                                    <el-select v-model="form.cycleUnit" style="width:80px" :teleported="false">
+                                    <el-select v-model="form.cycleUnit" style="width:64px" :teleported="false">
                                         <el-option :label="t('unit.day')" value="day"></el-option>
                                         <el-option :label="t('unit.month')" value="month"></el-option>
                                         <el-option :label="t('unit.year')" value="year"></el-option>
@@ -4457,79 +4514,59 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-input>
                         </el-form-item>
-                        <el-form-item :label="t('useLunar')" class="!mb-0"><el-switch v-model="form.useLunar"
-                                style="--el-switch-on-color:#2563eb;"></el-switch></el-form-item>
+
+                        <el-form-item class="!mb-0" :class="form.type === 'repeat' ? 'sm:col-span-6' : 'sm:col-span-4'">
+                            <template #label>
+                                <div class="flex items-center gap-1">
+                                    <span>{{ lang === 'zh' ? '下次到期 / 提醒日 (自动反推)' : 'Target Due Date (Auto)' }}</span>
+                                    <el-tooltip :content="lang === 'zh' ? '直接选择下次要提醒的日期（如每月22号），系统将按周期自动反推「上次续期」，「创建时间」保持为建档日期。' : 'Pick target due date to back-calculate Last Renew automatically.'" placement="top">
+                                        <span class="text-amber-500 cursor-help">&#9432;</span>
+                                    </el-tooltip>
+                                </div>
+                            </template>
+                            <el-date-picker v-model="targetDueDate" type="date" value-format="YYYY-MM-DD" style="width:100%" class="!w-full"
+                                clearable :placeholder="previewData ? (lang === 'zh' ? `当前: ${previewData.date} (点击可反推)` : `Due: ${previewData.date}`) : (lang === 'zh' ? '选日期自动反推上次续期' : 'Pick due date')"
+                                @change="applyTargetDueDate"></el-date-picker>
+                        </el-form-item>
                     </div>
 
-                    <!-- Repeat Settings Panel -->
-                    <div v-if="form.type === 'repeat' && form.repeat" class="p-4 mb-4 rounded-md border border-blue-200 bg-blue-50/50 dark:bg-slate-800/80 dark:border-slate-700 shadow-sm transition-all">
-                        <div class="flex items-center gap-2 font-bold text-sm text-blue-800 dark:text-blue-300 mb-4 pb-2 border-b border-blue-100 dark:border-slate-700">
-                            <el-icon><Calendar /></el-icon>{{ lang === 'zh' ? '定期重复配置' : 'Recurrence Settings' }}
-                            <el-tooltip :content="lang === 'zh' ? '配置重复规则，至少需要设定频率，为必填项。' : 'Configure the recurrence rule. Frequency is required.'" placement="top"><span class="text-red-500 cursor-help font-bold">*</span></el-tooltip>
-                        </div>
-                        <div class="mb-4">
-                            <el-form-item class="!mb-0 w-full">
-                                <template #label>
-                                    <div class="flex items-center gap-1">
-                                        <span>{{ lang === 'zh' ? '重复频率' : 'Repeat Every' }}</span>
-                                        <el-tooltip :content="lang === 'zh' ? '设置重复的间隔和周期类型（日/周/月/年），为必填项。' : 'Set the interval and period type (Daily/Weekly/Monthly/Yearly), required.'" placement="top">
-                                            <span class="text-red-500 cursor-help font-bold">*</span>
-                                        </el-tooltip>
-                                    </div>
-                                </template>
-                                <div class="flex items-center gap-2 w-full">
-                                    <span class="text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">{{ lang === 'zh' ? '每' : 'Every' }}</span>
-                                    <el-input-number v-model="form.repeat.interval" :min="1" controls-position="right" class="!w-24" />
+                    <!-- Repeat Settings Panel (仅固定重复模式显示，紧凑排版) -->
+                    <div v-if="form.type === 'repeat' && form.repeat" class="p-2.5 mb-2.5 rounded-md border border-blue-200 bg-blue-50/50 dark:bg-slate-800/80 dark:border-slate-700 shadow-sm transition-all">
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                            <el-form-item class="!mb-0 sm:col-span-5" :label="lang === 'zh' ? '重复频率 *' : 'Repeat Every *'">
+                                <div class="flex items-center gap-1.5 w-full">
+                                    <span class="text-xs text-slate-600 dark:text-slate-300 whitespace-nowrap">{{ lang === 'zh' ? '每' : 'Every' }}</span>
+                                    <el-input-number v-model="form.repeat.interval" :min="1" controls-position="right" class="!w-20" />
                                     <el-select v-model="form.repeat.freq" class="flex-1">
-                                        <el-option :label="lang === 'zh' ? '日 (Daily)' : 'Daily'" value="daily"></el-option>
-                                        <el-option :label="lang === 'zh' ? '周 (Weekly)' : 'Weekly'" value="weekly"></el-option>
-                                        <el-option :label="lang === 'zh' ? '月 (Monthly)' : 'Monthly'" value="monthly"></el-option>
-                                        <el-option :label="lang === 'zh' ? '年 (Yearly)' : 'Yearly'" value="yearly"></el-option>
+                                        <el-option :label="lang === 'zh' ? '日' : 'Daily'" value="daily"></el-option>
+                                        <el-option :label="lang === 'zh' ? '周' : 'Weekly'" value="weekly"></el-option>
+                                        <el-option :label="lang === 'zh' ? '月' : 'Monthly'" value="monthly"></el-option>
+                                        <el-option :label="lang === 'zh' ? '年' : 'Yearly'" value="yearly"></el-option>
                                     </el-select>
                                 </div>
                             </el-form-item>
-                        </div>
 
-                        <!-- 每年可选定月份 -->
-                        <div v-if="form.repeat.freq === 'yearly'" class="mb-4">
-                            <el-form-item :label="lang === 'zh' ? '指定月份' : 'By Month'" class="!mb-0 w-full">
-                                <el-select v-model="form.repeat.bymonth" multiple clearable collapse-tags collapse-tags-tooltip :max-collapse-tags="5" :placeholder="lang === 'zh' ? '默认为开始月份' : 'Start Month Default'" style="width:100%">
-                                    <el-option v-for="m in 12" :key="'m'+m" :label="lang === 'zh' ? ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'][m-1] : ['January','February','March','April','May','June','July','August','September','October','November','December'][m-1]" :value="m"></el-option>
+                            <el-form-item v-if="form.repeat.freq === 'yearly'" :label="lang === 'zh' ? '指定月份' : 'By Month'" class="!mb-0 sm:col-span-3">
+                                <el-select v-model="form.repeat.bymonth" multiple clearable collapse-tags collapse-tags-tooltip :max-collapse-tags="2" :placeholder="lang === 'zh' ? '默认开始月' : 'Default'" style="width:100%">
+                                    <el-option v-for="m in 12" :key="'m'+m" :label="lang === 'zh' ? m + '月' : m" :value="m"></el-option>
                                 </el-select>
                             </el-form-item>
-                        </div>
-                        
-                        <!-- Daily: 指定触发天数 -->
-                        <div v-if="form.repeat.freq === 'daily' && form.repeat.interval > 1" class="mb-4">
-                            <el-form-item class="!mb-0 w-full">
-                                <template #label>
-                                    <div class="flex items-center gap-1">
-                                        <span>{{ lang === 'zh' ? '指定触发天数' : 'TRIGGER DAYS' }}</span>
-                                        <el-tooltip :content="lang === 'zh' ? '在每个周期内的第几天触发。第1天 = 周期起始日当天。例如每5天中选第3天和第5天，则在周期的第3天和最后一天触发。' : 'Which day in each cycle to trigger. Day 1 = cycle start. E.g. for Every 5 days, select Day 3 and Day 5.'" placement="top">
-                                            <span class="text-amber-500 cursor-help">&#9432;</span>
-                                        </el-tooltip>
-                                    </div>
-                                </template>
-                                <el-select v-model="form.repeat.bycycleday" multiple clearable collapse-tags :max-collapse-tags="5" :placeholder="lang === 'zh' ? '可选，选择周期中的第几天' : 'Optional, select which day in cycle'" style="width:100%" filterable allow-create default-first-option>
+
+                            <el-form-item v-if="form.repeat.freq === 'daily' && form.repeat.interval > 1" :label="lang === 'zh' ? '触发天数' : 'Cycle Days'" class="!mb-0 sm:col-span-7">
+                                <el-select v-model="form.repeat.bycycleday" multiple clearable collapse-tags :max-collapse-tags="4" :placeholder="lang === 'zh' ? '选择周期中第几天' : 'Select day'" style="width:100%" filterable allow-create default-first-option>
                                     <el-option v-for="d in form.repeat.interval" :key="'cd'+d" :label="lang === 'zh' ? '第' + d + '天' : 'Day ' + d" :value="d"></el-option>
                                 </el-select>
                             </el-form-item>
-                        </div>
 
-                        <!-- monthly/yearly: 指定日期 -->
-                        <div v-if="['monthly', 'yearly'].includes(form.repeat.freq)" class="mb-4">
-                            <el-form-item :label="lang === 'zh' ? '指定日期' : 'BY DAY'" class="!mb-0 w-full">
-                                <el-select v-model="form.repeat.bymonthday" multiple clearable collapse-tags :max-collapse-tags="5" :placeholder="lang === 'zh' ? '默认为开始日，如输入 -1 代表最后一天' : 'Start Day Default, e.g. -1 for Last Day'" style="width:100%" filterable allow-create default-first-option>
+                            <el-form-item v-if="['monthly', 'yearly'].includes(form.repeat.freq)" :label="lang === 'zh' ? '指定日期' : 'By Day'" class="!mb-0 sm:col-span-4">
+                                <el-select v-model="form.repeat.bymonthday" multiple clearable collapse-tags :max-collapse-tags="3" :placeholder="lang === 'zh' ? '默认开始日(-1最后一天)' : 'Default'" style="width:100%" filterable allow-create default-first-option>
                                     <el-option v-for="d in 31" :key="'d'+d" :label="d + (lang === 'zh' ? '日':'')" :value="String(d)"></el-option>
-                                    <el-option :label="lang === 'zh' ? '倒数第1天 (-1)' : 'Last Day (-1)'" :value="'-1'"></el-option>
+                                    <el-option :label="lang === 'zh' ? '最后一天 (-1)' : 'Last Day (-1)'" :value="'-1'"></el-option>
                                 </el-select>
                             </el-form-item>
-                        </div>
-                        
-                        <!-- 每周等可选定周几 -->
-                        <div v-if="['weekly', 'monthly', 'yearly'].includes(form.repeat.freq)" class="mb-4">
-                            <el-form-item :label="lang === 'zh' ? '指定星期' : 'By Week Day'" class="!mb-0 w-full">
-                                <el-select v-model="form.repeat.byweekday" multiple clearable collapse-tags :max-collapse-tags="5" :placeholder="lang === 'zh' ? '不指定 / 默认为开始日的星期' : 'Default to Start Weekday'" style="width:100%">
+
+                            <el-form-item v-if="['weekly', 'monthly', 'yearly'].includes(form.repeat.freq)" :label="lang === 'zh' ? '指定星期' : 'Weekday'" class="!mb-0 sm:col-span-3">
+                                <el-select v-model="form.repeat.byweekday" multiple clearable collapse-tags :max-collapse-tags="2" :placeholder="lang === 'zh' ? '不限' : 'Any'" style="width:100%">
                                     <el-option :label="lang === 'zh' ? '周一' : 'Mon'" :value="1"></el-option>
                                     <el-option :label="lang === 'zh' ? '周二' : 'Tue'" :value="2"></el-option>
                                     <el-option :label="lang === 'zh' ? '周三' : 'Wed'" :value="3"></el-option>
@@ -4541,79 +4578,30 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </el-form-item>
                         </div>
 
-                        <!-- 匹配结果位选 (如: 当月最后一个周五) -->
-                        <div v-if="['monthly', 'yearly'].includes(form.repeat.freq)">
-                            <el-form-item :label="lang === 'zh' ? '指定位置' : 'By Set Position'" class="!mb-0 w-full">
-                                <el-select v-model="form.repeat.bysetpos" clearable :placeholder="lang === 'zh' ? '输入或选择任意数字 (如 -3 代表倒数第 3 个)' : 'Type or select a number'" style="width:100%" filterable allow-create default-first-option>
-                                    <el-option :label="lang === 'zh' ? '集合内第一个 (1)' : 'First in set (1)'" :value="'1'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内第二个 (2)' : 'Second in set (2)'" :value="'2'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内第三个 (3)' : 'Third in set (3)'" :value="'3'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内第四个 (4)' : 'Fourth in set (4)'" :value="'4'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内最后一个 (-1)' : 'Last in set (-1)'" :value="'-1'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内倒数第二个 (-2)' : 'Second to last (-2)'" :value="'-2'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内倒数第三个 (-3)' : 'Third to last (-3)'" :value="'-3'"></el-option>
-                                    <el-option :label="lang === 'zh' ? '集合内倒数第四个 (-4)' : 'Fourth to last (-4)'" :value="'-4'"></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </div>
-
-                        <!-- 重复规则自然语言预览 -->
-                        <div class="mt-4 p-3 bg-indigo-50 dark:bg-slate-800/50 rounded-lg border border-indigo-100 dark:border-slate-700 shadow-sm space-y-2">
-                            <div class="flex items-center">
-                                <el-icon class="text-indigo-500 mr-2 text-lg shrink-0"><Calendar /></el-icon>
-                                <span class="text-sm font-medium text-indigo-900 dark:text-indigo-300">
-                                    {{ lang === 'zh' ? '规则预览：' : 'Description: ' }}
-                                    <span class="font-bold border-b border-indigo-300 dark:border-indigo-600 border-dashed pb-0.5">{{ repeatDescription }}</span>
-                                </span>
-                            </div>
-                            <div v-if="repeatUpcomingDates" class="flex items-center">
-                                <el-icon class="text-indigo-400 mr-2 text-lg shrink-0"><Calendar /></el-icon>
-                                <span class="text-sm font-medium text-indigo-800 dark:text-indigo-400">
-                                    {{ lang === 'zh' ? '预计到期：' : 'Expected: ' }}
-                                    <el-tooltip effect="dark" placement="top">
-                                        <template #content>
-                                            <div>
-                                                <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 4px;">{{ lang === 'zh' ? '未来 10 次到期建议：' : 'Next 10 Occurrences:' }}</div>
-                                                <div style="white-space: pre-wrap; line-height: 1.6;" v-text="repeatUpcomingDates.full"></div>
-                                            </div>
-                                        </template>
-                                        <span class="font-bold font-mono cursor-help border-b border-dashed border-indigo-400 dark:border-indigo-600">{{ repeatUpcomingDates.summary }}</span>
-                                    </el-tooltip>
-                                </span>
-                            </div>
+                        <div class="mt-2 pt-1.5 border-t border-blue-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <span class="text-indigo-900 dark:text-indigo-300">
+                                {{ lang === 'zh' ? '规则预览：' : 'Rule: ' }}<span class="font-bold">{{ repeatDescription }}</span>
+                            </span>
+                            <span v-if="repeatUpcomingDates" class="text-indigo-700 dark:text-indigo-400 font-mono">
+                                {{ lang === 'zh' ? '预计：' : 'Next: ' }}
+                                <el-tooltip effect="dark" placement="top">
+                                    <template #content>
+                                        <div style="white-space: pre-wrap; line-height: 1.5;" v-text="repeatUpcomingDates.full"></div>
+                                    </template>
+                                    <span class="font-bold cursor-help border-b border-dashed border-indigo-400">{{ repeatUpcomingDates.summary }}</span>
+                                </el-tooltip>
+                            </span>
                         </div>
                     </div>
 
-                    <div class="mb-4 p-3 rounded-sm border border-dashed border-blue-300 bg-blue-50/40 dark:bg-slate-800/50 dark:border-slate-600">
-                        <el-form-item class="!mb-0">
+                    <!-- 第四行：创建时间 + 上次续期 + 下次到期计算结果 三列同行 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end mb-2.5">
+                        <el-form-item class="!mb-0 sm:col-span-4">
                             <template #label>
                                 <div class="flex items-center gap-1">
-                                    <span>{{ lang === 'zh' ? '下次到期 / 提醒日 (可选)' : 'Next Due Date (Optional)' }}</span>
-                                    <el-tooltip :content="lang === 'zh' ? '直接填入下次要提醒的日期（如 2026-11-22），系统将按周期自动反推「上次续期」，「创建时间」保持为今天的真实建档日期。' : 'Enter the next due date; Last Renew is calculated backwards by the cycle, Create Date stays as today.'" placement="top">
-                                        <span class="text-amber-500 cursor-help">&#9432;</span>
-                                    </el-tooltip>
-                                </div>
-                            </template>
-                            <el-date-picker v-model="targetDueDate" type="date" value-format="YYYY-MM-DD" style="width:100%" class="!w-full"
-                                clearable :placeholder="previewData ? (lang === 'zh' ? `当前计算到期日: ${previewData.date}（选择目标日期可自动反推上次续期）` : `Current Due: ${previewData.date} (Pick to auto-calculate Last Renew)`) : (lang === 'zh' ? '例如每月22号提醒，选择最近的 22 号' : 'e.g. pick the coming 22nd')"
-                                @change="applyTargetDueDate"></el-date-picker>
-                        </el-form-item>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <el-form-item class="!mb-0">
-                            <template #label>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex items-center gap-1">
-                                        <span>{{ t('createDate') }}</span>
-                                        <el-tooltip :content="lang === 'zh' ? '首次购买/创建该服务的日期，为必填项。' : 'Original purchase/creation date, required.'" placement="top">
-                                            <span class="text-red-500 cursor-help font-bold">*</span>
-                                        </el-tooltip>
-                                    </div>
-                                    <span
-                                        v-if="form.useLunar && form.createDate"
-                                        class="text-[12px] font-bold text-purple-600 font-mono ml-1">{{
-                                            getLunarStr(form.createDate).replace('农历: ', '') }}</span>
+                                    <span>{{ t('createDate') }}</span>
+                                    <span class="text-red-500 font-bold">*</span>
+                                    <span v-if="form.useLunar && form.createDate" class="text-[11px] font-bold text-purple-600 font-mono ml-1">{{ getLunarStr(form.createDate).replace('农历: ', '') }}</span>
                                 </div>
                             </template>
                             <el-date-picker v-if="form.useLunar" v-model="form.createDate" type="date"
@@ -4639,19 +4627,13 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                     </div>
                                 </template></el-date-picker>
                         </el-form-item>
-                        <el-form-item class="!mb-0">
+
+                        <el-form-item class="!mb-0 sm:col-span-4">
                             <template #label>
-                                <div class="flex items-center gap-2">
-                                    <div class="flex items-center gap-1">
-                                        <span>{{ t('lastRenew') }}</span>
-                                        <el-tooltip :content="lang === 'zh' ? '最近一次完成续费的日期，系统将以此为基准推算下一次到期日期，为必填项。' : 'The date of the most recent renewal, required.'" placement="top">
-                                            <span class="text-red-500 cursor-help font-bold">*</span>
-                                        </el-tooltip>
-                                    </div>
-                                    <span
-                                        v-if="form.useLunar && form.lastRenewDate"
-                                        class="text-[12px] font-bold text-purple-600 font-mono ml-1">{{
-                                            getLunarStr(form.lastRenewDate).replace('农历: ', '') }}</span>
+                                <div class="flex items-center gap-1">
+                                    <span>{{ t('lastRenew') }}</span>
+                                    <span class="text-red-500 font-bold">*</span>
+                                    <span v-if="form.useLunar && form.lastRenewDate" class="text-[11px] font-bold text-purple-600 font-mono ml-1">{{ getLunarStr(form.lastRenewDate).replace('农历: ', '') }}</span>
                                 </div>
                             </template>
                             <el-date-picker v-if="form.useLunar" v-model="form.lastRenewDate" type="date"
@@ -4675,151 +4657,138 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                     </div>
                                 </template></el-date-picker>
                         </el-form-item>
-                    </div>
 
-                    <div v-if="previewData"
-                        class="relative mb-4 overflow-hidden rounded-sm border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900 shadow-sm group">
-                        <div class="flex justify-between items-center p-3 pl-5">
-                            <div>
-                                <div
-                                    class="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono mb-0.5">
-                                    {{
-                                        t('nextDue') }}</div>
-                                <div
-                                    class="text-xl font-bold text-slate-700 dark:text-slate-200 font-mono tracking-tight leading-none">
-                                    {{ previewData.date }}</div>
+                        <!-- 下次到期实时计算预览与前两项并列在一行 -->
+                        <div class="sm:col-span-4">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-between">
+                                <span>{{ t('nextDue') }}</span>
+                                <span class="text-[10px] font-mono text-slate-400">{{ lang === 'zh' ? '自动推算' : 'Auto Calc' }}</span>
                             </div>
-                            <div class="text-right">
-                                <div class="text-[10px] text-slate-400 font-mono mb-0.5">{{ t('previewCalc') }}</div>
-                                <div class="text-lg font-bold text-blue-600 dark:text-blue-400 font-mono leading-none">
-                                    {{
-                                        previewData.diff }}</div>
+                            <div v-if="previewData" class="h-[32px] px-3 rounded-sm border border-blue-200 bg-blue-50/60 dark:border-slate-700 dark:bg-slate-800 flex items-center justify-between">
+                                <span class="font-mono font-bold text-sm text-slate-800 dark:text-slate-100">{{ previewData.date }}</span>
+                                <span class="font-mono font-bold text-xs text-blue-600 dark:text-blue-400">{{ previewData.diff }}</span>
                             </div>
+                            <div v-else class="h-[32px] px-3 rounded-sm border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800 flex items-center text-xs text-slate-400">--</div>
                         </div>
                     </div>
 
-                    <!-- 🔔 提醒规则卡片 (展开式多条规则 + 展开式提醒时间) -->
-                    <div class="mb-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50 shadow-sm">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2.5 border-b border-slate-200/80 dark:border-slate-700">
+                    <!-- 第五行：🔔 提醒规则卡片 (双列紧凑平铺规则 + 单行平铺提醒时间) -->
+                    <div class="mb-2.5 p-2.5 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/50">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1.5 border-b border-slate-200/80 dark:border-slate-700">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <el-icon class="text-indigo-600 dark:text-indigo-400 text-base"><Bell /></el-icon>
-                                <span class="font-bold text-sm text-slate-800 dark:text-slate-100">{{ lang === 'zh' ? '提醒规则' : 'Reminder Rules' }}</span>
-                                <span class="text-xs text-slate-400 dark:text-slate-400">{{ lang === 'zh' ? '（支持多条规则；新订阅默认 7/3/1 天 + 当天）' : '(Multi-rule supported; default 7/3/1d + Today)' }}</span>
+                                <el-icon class="text-indigo-600 dark:text-indigo-400 text-sm"><Bell /></el-icon>
+                                <span class="font-bold text-xs text-slate-800 dark:text-slate-100">{{ lang === 'zh' ? '提醒规则' : 'Reminder Rules' }}</span>
+                                <span class="text-[11px] text-slate-400">{{ lang === 'zh' ? '（精确匹配剩余天数；默认 7/3/1 天 + 当天）' : '(Exact day match; default 7/3/1d + Today)' }}</span>
                             </div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <el-button size="small" plain @click="applyPresetNotifyRules([7, 3, 1, 0])">
-                                    <el-icon class="mr-1"><Edit /></el-icon>{{ lang === 'zh' ? '应用预设(7/3/1/当天)' : 'Preset (7/3/1/Today)' }}
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <el-button size="small" class="!h-6 !px-2 !text-xs" plain @click="applyPresetNotifyRules([7, 3, 1, 0])">
+                                    <el-icon class="mr-0.5"><Edit /></el-icon>{{ lang === 'zh' ? '预设(7/3/1/当天)' : '7/3/1/Today' }}
                                 </el-button>
-                                <el-button size="small" plain @click="applyPresetNotifyRules([0])">
+                                <el-button size="small" class="!h-6 !px-2 !text-xs" plain @click="applyPresetNotifyRules([0])">
                                     {{ lang === 'zh' ? '仅当天' : 'Today Only' }}
                                 </el-button>
-                                <el-button size="small" type="primary" class="!bg-indigo-600 !border-indigo-600 hover:!bg-indigo-500" @click="addNotifyRule">
-                                    <el-icon class="mr-1"><Plus /></el-icon>{{ lang === 'zh' ? '添加规则' : 'Add Rule' }}
+                                <el-button size="small" type="primary" class="!h-6 !px-2 !text-xs !bg-indigo-600 !border-indigo-600 hover:!bg-indigo-500" @click="addNotifyRule">
+                                    <el-icon class="mr-0.5"><Plus /></el-icon>{{ lang === 'zh' ? '添加规则' : 'Add Rule' }}
                                 </el-button>
                             </div>
                         </div>
 
-                        <!-- 规则列表（逐行平铺，绝不折叠） -->
-                        <div class="space-y-2.5 mb-3">
+                        <!-- 规则列表（双列网格平铺，省空间且绝不折叠） -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2">
                             <div v-for="(rule, rIdx) in form.notifyRules" :key="'nrule-' + rIdx"
-                                class="flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 transition-all"
+                                class="flex items-center justify-between gap-1.5 px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80"
                                 :class="{ 'opacity-60': !rule.enabled }">
-                                <div class="flex items-center gap-2.5 flex-wrap flex-1">
-                                    <el-checkbox v-model="rule.enabled" @change="syncNotifyDaysFromRules">
+                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                    <el-checkbox v-model="rule.enabled" size="small" @change="syncNotifyDaysFromRules">
                                         <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ lang === 'zh' ? '启用' : 'On' }}</span>
                                     </el-checkbox>
-                                    <el-select v-model="rule.type" size="default" style="width: 115px" @change="onRuleTypeChange(rule)">
+                                    <el-select v-model="rule.type" size="small" style="width: 92px" @change="onRuleTypeChange(rule)">
                                         <el-option :label="lang === 'zh' ? '到期前' : 'Before'" value="before" />
-                                        <el-option :label="lang === 'zh' ? '到期当天' : 'On Due Day'" value="today" />
-                                        <el-option :label="lang === 'zh' ? '到期后' : 'After Due'" value="after" />
+                                        <el-option :label="lang === 'zh' ? '到期当天' : 'Today'" value="today" />
+                                        <el-option :label="lang === 'zh' ? '到期后' : 'After'" value="after" />
                                     </el-select>
-                                    <el-input-number v-model="rule.days" size="default" :min="rule.type === 'today' ? 0 : 1" :max="3650"
-                                        :disabled="rule.type === 'today'" controls-position="right" style="width: 95px"
+                                    <el-input-number v-model="rule.days" size="small" :min="rule.type === 'today' ? 0 : 1" :max="3650"
+                                        :disabled="rule.type === 'today'" controls-position="right" style="width: 78px"
                                         @change="syncNotifyDaysFromRules" />
-                                    <el-select v-model="rule.unit" size="default" style="width: 76px" :disabled="rule.type === 'today'">
-                                        <el-option :label="lang === 'zh' ? '天' : 'Day'" value="day" />
-                                    </el-select>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 shrink-0">{{ lang === 'zh' ? '天' : 'd' }}</span>
                                 </div>
-                                <el-button type="danger" link :icon="Delete" @click="removeNotifyRule(rIdx)"
+                                <el-button type="danger" link size="small" :icon="Delete" @click="removeNotifyRule(rIdx)"
                                     :title="lang === 'zh' ? '删除此规则' : 'Remove rule'" />
                             </div>
                         </div>
 
-                        <!-- ⏰ 提醒时间（平铺标签 + 快捷时间点 + 自定义输入，绝不折叠） -->
-                        <div class="p-3 rounded-md border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900/80 mb-2.5">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <div class="flex items-center gap-1.5">
-                                    <el-icon class="text-blue-600 dark:text-blue-400"><AlarmClock /></el-icon>
-                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('lblNotifyTime') }}</span>
-                                    <span class="text-[11px] text-slate-400">{{ lang === 'zh' ? '（支持多个推送时间点，全部平铺显示）' : '(Multiple push times, all expanded)' }}</span>
+                        <!-- ⏰ 提醒时间（单栏紧凑平铺标签 + 快捷点选 + 自定义输入） -->
+                        <div class="px-2.5 py-1.5 rounded border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-900/80 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <div class="flex items-center gap-1 mr-1">
+                                    <el-icon class="text-blue-600 dark:text-blue-400 text-xs"><AlarmClock /></el-icon>
+                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ t('lblNotifyTime') }}:</span>
                                 </div>
-                                <div class="flex items-center gap-1 flex-wrap">
-                                    <span class="text-[11px] text-slate-400 mr-1">{{ lang === 'zh' ? '快捷点选:' : 'Quick:' }}</span>
-                                    <button v-for="presetT in notifyTimeQuickPresets" :key="'qp-' + presetT" type="button"
-                                        @click="toggleQuickNotifyTime(presetT)"
-                                        :class="['px-2 py-0.5 text-[11px] font-mono font-bold rounded border transition-all cursor-pointer',
-                                            (form.notifyTime || []).includes(presetT)
-                                                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                                                : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400']">
-                                        {{ presetT }}
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2">
                                 <el-tag v-for="tVal in (form.notifyTime || [])" :key="'ntag-' + tVal"
-                                    closable size="large" effect="light"
-                                    class="!font-mono !text-sm !font-bold !px-3 !py-1.5"
+                                    closable size="default" effect="light"
+                                    class="!font-mono !text-xs !font-bold"
                                     @close="removeNotifyTimeTag(tVal)">
                                     🕒 {{ tVal }}
                                 </el-tag>
                                 <el-select v-model="newNotifyTimeInput" filterable allow-create default-first-option
                                     clearable :reserve-keyword="false"
-                                    :placeholder="lang === 'zh' ? '+ 添加时间 (如 08:15)' : '+ Add time (e.g. 08:15)'"
-                                    style="width: 175px" size="default"
+                                    :placeholder="lang === 'zh' ? '+ 添加时间(08:15)' : '+ Time'"
+                                    style="width: 135px" size="small"
                                     @change="addCustomNotifyTime">
                                     <el-option v-for="tOpt in notifyTimeOptions" :key="'opt-' + tOpt" :label="tOpt" :value="tOpt" />
                                 </el-select>
                             </div>
-                        </div>
-
-                        <div class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                            <span class="font-bold text-slate-700 dark:text-slate-200">{{ lang === 'zh' ? '触发语义（精确匹配）：' : 'Trigger Semantics (Exact Match): ' }}</span>
-                            {{ lang === 'zh'
-                                ? '「到期前 N 天」仅在剩余天数正好等于 N 时按上方设定的提醒时间发送，不会在第 N-1...1 天自动连发。若希望 7/3/1 天都提醒，请添加多条规则（可用上方预设）。'
-                                : '"Before N Days" triggers only when days left equals N at the configured alarm times. Add multiple rules or use the preset above for 7/3/1d alerts.' }}
-                        </div>
-                    </div>
-
-                    <!-- 自动续期配置行 -->
-                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 p-3 rounded-md border border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-800/30">
-                        <div class="flex items-center gap-3">
-                            <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ t('policyAuto') }}</span>
-                            <el-switch v-model="form.autoRenew" style="--el-switch-on-color:#2563eb;"></el-switch>
-                            <span class="text-xs text-slate-400">{{ form.autoRenew ? t('autoRenewOnDesc') : t('autoRenewOffDesc') }}</span>
-                        </div>
-                        <div v-if="form.autoRenew" class="flex items-center gap-2">
-                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap">{{ t('policyRenewDay') }}</span>
-                            <el-input-number v-model="form.autoRenewDays" :min="0" controls-position="right" style="width: 110px"></el-input-number>
+                            <div class="flex items-center gap-1 flex-wrap">
+                                <span class="text-[11px] text-slate-400">{{ lang === 'zh' ? '快捷:' : 'Quick:' }}</span>
+                                <button v-for="presetT in notifyTimeQuickPresets" :key="'qp-' + presetT" type="button"
+                                    @click="toggleQuickNotifyTime(presetT)"
+                                    :class="['px-1.5 py-0.5 text-[11px] font-mono font-bold rounded border transition-all cursor-pointer',
+                                        (form.notifyTime || []).includes(presetT)
+                                            ? 'bg-blue-600 text-white border-blue-600'
+                                            : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-blue-400']">
+                                    {{ presetT }}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <el-form-item :label="t('note')"><el-input v-model="form.message" type="textarea"
-                            rows="2"></el-input></el-form-item>
-                    <el-form-item :label="t('renewUrl')"><el-input v-model="form.renewUrl"
-                            :placeholder="t('renewUrlPlaceholder')" clearable></el-input></el-form-item>
+                    <!-- 第六行：自动续期 + 备注信息 + 续费链接 紧凑同行 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+                        <div class="sm:col-span-4">
+                            <div class="text-xs text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+                                <span>{{ t('policyAuto') }}</span>
+                                <span v-if="form.autoRenew" class="text-[11px] text-slate-400">{{ t('policyRenewDay') }}</span>
+                            </div>
+                            <div class="h-[32px] px-2.5 rounded-sm border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5">
+                                    <el-switch v-model="form.autoRenew" size="small" style="--el-switch-on-color:#2563eb;"></el-switch>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ form.autoRenew ? (lang === 'zh' ? '自动续期' : 'Auto') : (lang === 'zh' ? '过期停用' : 'Disable') }}</span>
+                                </div>
+                                <el-input-number v-if="form.autoRenew" v-model="form.autoRenewDays" size="small" :min="0" controls-position="right" style="width: 76px"></el-input-number>
+                            </div>
+                        </div>
+
+                        <el-form-item :label="t('note')" class="!mb-0 sm:col-span-4">
+                            <el-input v-model="form.message" :placeholder="lang === 'zh' ? '可选备注信息...' : 'Optional note...'" clearable></el-input>
+                        </el-form-item>
+
+                        <el-form-item :label="t('renewUrl')" class="!mb-0 sm:col-span-4">
+                            <el-input v-model="form.renewUrl" :placeholder="t('renewUrlPlaceholder')" clearable></el-input>
+                        </el-form-item>
+                    </div>
                 </el-form>
 
                 <template #footer>
-                    <div class="flex justify-between items-center w-full pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center w-full pt-1.5 border-t border-slate-100 dark:border-slate-800">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-slate-500">{{ t('status') }}</span>
-                            <el-switch v-model="form.enabled" :active-text="t('active')"
+                            <el-switch v-model="form.enabled" size="small" :active-text="t('active')"
                                 :inactive-text="t('disabledText')" style="--el-switch-on-color:#2563eb;"></el-switch>
                         </div>
-                        <div class="flex gap-3">
-                            <el-button @click="dialogVisible = false" size="large" class="mecha-btn">{{ t('cancel')
+                        <div class="flex gap-2.5">
+                            <el-button @click="dialogVisible = false" class="mecha-btn">{{ t('cancel')
                             }}</el-button>
-                            <el-button type="primary" @click="saveItem" size="large" class="mecha-btn !bg-blue-600">{{
+                            <el-button type="primary" @click="saveItem" class="mecha-btn !bg-blue-600">{{
                                 t('save') }}</el-button>
                         </div>
                     </div>
