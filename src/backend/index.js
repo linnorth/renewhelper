@@ -1280,7 +1280,19 @@ async function webhookAdapterImpl(c, title, body) {
 // 4. Logic Controllers
 // ==========================================
 
-function normalizeNotifyDaysList(rawList, rawSingle) {
+function normalizeNotifyDaysList(rawList, rawSingle, rawRules) {
+    if (Array.isArray(rawRules) && rawRules.length > 0) {
+        const fromRules = rawRules
+            .filter((r) => r && r.enabled !== false)
+            .map((r) => {
+                const d = Math.abs(parseInt(String(r.days ?? 0), 10) || 0);
+                if (r.type === "today") return 0;
+                if (r.type === "after") return -Math.max(1, d);
+                return Math.max(0, d);
+            })
+            .filter((n) => Number.isFinite(n));
+        return Array.from(new Set(fromRules)).sort((a, b) => b - a);
+    }
     const source = Array.isArray(rawList) && rawList.length > 0
         ? rawList
         : (Array.isArray(rawSingle) && rawSingle.length > 0
@@ -1289,8 +1301,8 @@ function normalizeNotifyDaysList(rawList, rawSingle) {
     const cleaned = Array.from(
         new Set(
             source
-                .map((v) => parseInt(String(v).replace(/[^\d]/g, ""), 10))
-                .filter((n) => Number.isFinite(n) && n >= 0)
+                .map((v) => parseInt(String(v).replace(/[^\d-]/g, ""), 10))
+                .filter((n) => Number.isFinite(n))
         )
     ).sort((a, b) => b - a);
     return cleaned.length > 0 ? cleaned : [3];
@@ -1397,8 +1409,9 @@ function calculateStatus(item, timezone = "UTC") {
         if (ll) lLast = ll.fullStr;
     }
 
-    const normDaysList = normalizeNotifyDaysList(item.notifyDaysList, item.notifyDays);
+    const normDaysList = normalizeNotifyDaysList(item.notifyDaysList, item.notifyDays, item.notifyRules);
     const normTimesList = normalizeNotifyTimesList(item.notifyTimes, item.notifyTime);
+    const posDays = normDaysList.filter((n) => n >= 0);
 
     return {
         ...item,
@@ -1413,7 +1426,7 @@ function calculateStatus(item, timezone = "UTC") {
         lastRenewDateLunar: lLast,
         tags: Array.isArray(item.tags) ? item.tags : [],
         useLunar: !!item.useLunar,
-        notifyDays: Math.max(...normDaysList),
+        notifyDays: posDays.length > 0 ? Math.max(...posDays) : 0,
         notifyDaysList: normDaysList,
         notifyTime: normTimesList[0] || "08:00",
         notifyTimes: normTimesList,
@@ -1539,10 +1552,14 @@ async function checkAndRenew(env, isSched, lang = "zh") {
 
         const iAutoRenew = it.autoRenew !== false;
         const iRenewDays = typeof it.autoRenewDays === "number" ? it.autoRenewDays : 3;
-        const iNotifyDaysList = Array.isArray(st.notifyDaysList) && st.notifyDaysList.length > 0
+        const hasExplicitRules = Array.isArray(it.notifyRules) && it.notifyRules.length > 0;
+        const iNotifyDaysList = Array.isArray(st.notifyDaysList)
             ? st.notifyDaysList
-            : normalizeNotifyDaysList(it.notifyDaysList, it.notifyDays);
+            : normalizeNotifyDaysList(it.notifyDaysList, it.notifyDays, it.notifyRules);
         const iNotifyDaysStr = iNotifyDaysList.join(",");
+        const shouldNotifyToday = hasExplicitRules
+            ? iNotifyDaysList.includes(days)
+            : (days <= 0 || iNotifyDaysList.includes(days));
 
         // ============================================================
         // 逻辑 A: 自动禁用 (Auto Disable)
@@ -1654,7 +1671,7 @@ async function checkAndRenew(env, isSched, lang = "zh") {
         // ============================================================
         // 逻辑 C: 到期提醒 (Notify)
         // ============================================================
-        else if (days <= 0 || iNotifyDaysList.includes(days)) {
+        else if (shouldNotifyToday) {
             const statusText =
                 days === 0
                     ? t("today", lang)
