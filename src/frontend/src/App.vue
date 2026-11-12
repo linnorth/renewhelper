@@ -987,7 +987,7 @@ const toggleTheme = () => {
 const windowWidth = ref(window.innerWidth);
 const updateWidth = () => windowWidth.value = window.innerWidth;
 const drawerSize = computed(() => windowWidth.value < 640 ? '100%' : '600px'); // 640px matching tailwind sm
-const actionColWidth = computed(() => windowWidth.value < 640 ? 100 : 250);
+const actionColWidth = computed(() => windowWidth.value < 640 ? 100 : 218);
 const paginationLayout = computed(() => windowWidth.value < 640 ? 'prev, pager, next, jumper' : 'total, sizes, prev, pager, next, jumper');
 // 2. 定义分页状态
 const currentPage = ref(1);
@@ -3347,7 +3347,7 @@ const submitAssign = async () => {
 const openLink = (url) => { if (url) window.open(url, '_blank'); };
 </script>
 <template>
-    <div id="app" v-cloak class="min-h-screen p-4 sm:p-8 flex flex-col transition-colors duration-300">
+    <div id="app" v-cloak class="min-h-screen p-3 sm:p-5 lg:p-6 flex flex-col transition-colors duration-300">
         <el-config-provider :locale="locale">
             <div v-if="!isLoggedIn"
                 class="fixed inset-0 bg-slate-500/50 backdrop-blur flex items-center justify-center z-50">
@@ -3630,10 +3630,10 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             :row-class-name="tableRowClassName" size="large" @sort-change="handleSortChange"
                             @filter-change="handleFilterChange" @selection-change="handleListSelectionChange" :default-sort="{ prop: 'daysLeft', order: 'ascending' }"
                             show-summary :summary-method="getSummaries" row-key="id">
-                            <el-table-column type="selection" width="50" align="center" reserve-selection />
-                            <el-table-column :label="t('serviceName')" min-width="230">
+                            <el-table-column type="selection" width="42" align="center" reserve-selection />
+                            <el-table-column :label="t('serviceName')" min-width="200">
                                 <template #default="scope">
-                                    <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-3">
                                         <div class="w-1 h-8 shrink-0 rounded-[1px] transition-all"
                                             :class="[scope.row.enabled ? 'bar-scanner' : 'bg-gray-300']"
                                             :style="scope.row.enabled ? { animationDelay: (scope.$index * 0.15) + 's' } : {}">
@@ -3642,21 +3642,21 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                             <div
                                                 class="font-bold text-base leading-tight tracking-tight text-textMain break-words flex items-center gap-2">
                                                 {{ scope.row.name }}</div>
-                                            <div class="text-xs text-textDim font-mono mt-0.5" v-if="scope.row.message">
+                                            <div class="text-xs text-textDim font-mono mt-0.5 break-words" v-if="scope.row.message">
                                                 // {{ scope.row.message }}</div>
                                         </div>
                                     </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('tagsCol')" min-width="80">
+                            <el-table-column :label="t('tagsCol')" min-width="76">
                                 <template #default="scope">
                                     <div class="tag-container"><span v-for="tag in scope.row.tags" :key="tag"
                                             class="tag-compact">{{ tag }}</span></div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('fixedPrice')" width="100" prop="fixedPrice" sortable="custom">
+                            <el-table-column :label="t('fixedPrice')" width="90" prop="fixedPrice" sortable="custom">
                                 <template #default="scope">
                                     <div class="font-mono">
                                         <span class="text-base font-bold text-slate-700 dark:text-slate-200">{{
@@ -3667,7 +3667,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('type')" width="100" prop="type" column-key="type"
+                            <el-table-column :label="t('type')" width="82" prop="type" column-key="type"
                                 :filters="typeFilters">
                                 <template #default="scope">
                                     <div class="flex items-center h-full">
@@ -3684,7 +3684,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('nextDue')" min-width="200" prop="daysLeft" sortable="custom"
+                            <el-table-column :label="t('nextDue')" width="148" prop="daysLeft" sortable="custom"
                                 column-key="daysLeft" :filters="nextDueFilters">
                                 <template #default="scope">
                                     <div v-if="scope.row.enabled">
@@ -3697,7 +3697,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                                 {{ t('lunarCal') }}</div>
                                         </div>
                                         <div
-                                            class="text-[10px] text-textDim font-mono mt-1 flex flex-wrap items-center gap-1.5 leading-tight">
+                                            class="text-[10px] text-textDim font-mono mt-1 flex flex-wrap items-center gap-1 leading-tight">
                                             <span>TARGET: {{ scope.row.nextDueDate }}</span>
                                             <span v-if="scope.row.useLunar && scope.row.nextDueDateLunar"
                                                 class="text-blue-500/80">({{ scope.row.nextDueDateLunar }})</span>
@@ -3708,7 +3708,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('uptime')" width="120" prop="serviceDays" sortable="custom"
+                            <el-table-column :label="t('uptime')" width="100" prop="serviceDays" sortable="custom"
                                 column-key="serviceDays" :filters="uptimeFilters">
                                 <template #default="scope">
                                     <span
@@ -3719,7 +3719,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('lastRenew')" width="120" prop="lastRenewDate" sortable="custom"
+                            <el-table-column :label="t('lastRenew')" width="112" prop="lastRenewDate" sortable="custom"
                                 column-key="lastRenewDate" :filters="lastRenewFilters">
                                 <template #default="scope">
                                     <div class="font-mono text-textDim text-sm font-bold">{{ scope.row.lastRenewDate ?
@@ -3731,7 +3731,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="t('cyclePeriod')" width="80">
+                            <el-table-column :label="t('cyclePeriod')" width="70">
                                 <template #default="scope">
                                     <template v-if="scope.row.type === 'repeat' && scope.row.repeat">
                                         <span class="font-mono font-bold text-lg text-textDim tracking-tighter">{{ scope.row.repeat.interval > 1 ? scope.row.repeat.interval : '1' }}</span>
@@ -3746,7 +3746,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
 
                             <el-table-column :label="t('actions')" :width="actionColWidth" fixed="right" align="right">
                                 <template #default="scope">
-                                    <div class="flex justify-end items-center gap-2">
+                                    <div class="flex justify-end items-center gap-1.5">
                                         <el-tooltip :content="t('tipToggle')" placement="top" :hide-after="0">
                                             <div class="inline-flex">
                                                 <el-switch v-model="scope.row.enabled" size="small"
@@ -3759,29 +3759,29 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                         <template v-if="windowWidth >= 640">
                                             <div class="inline-flex">
                                                 <el-tooltip :content="t('tipRenew')" placement="top" :hide-after="0">
-                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                    <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                         type="success" plain :icon="RefreshRight"
                                                         @click="openRenew(scope.row)"></el-button>
                                                 </el-tooltip>
                                                 <el-tooltip :content="t('tipNotify')" placement="top" :hide-after="0">
-                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                    <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                         type="info" plain :icon="Bell"
                                                         :loading="notifyingId === scope.row.id"
                                                         @click="sendItemNotify(scope.row)"></el-button>
                                                 </el-tooltip>
                                                 <el-tooltip :content="t('history')" placement="top" :hide-after="0">
-                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                    <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                         type="warning" plain :icon="Tickets"
                                                         @click="openHistory(scope.row)"></el-button>
                                                 </el-tooltip>
                                                 <el-tooltip :content="t('tipClone')" placement="top" :hide-after="0">
-                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                    <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                         type="primary" plain :icon="DocumentCopy"
                                                         @click="cloneItem(scope.row)"></el-button>
                                                 </el-tooltip>
 
                                                 <el-tooltip :content="t('tipEdit')" placement="top" :hide-after="0">
-                                                    <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                    <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                         type="primary" plain :icon="Edit"
                                                         @click="editItem(scope.row)"></el-button>
                                                 </el-tooltip>
@@ -3792,7 +3792,7 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                                         <div class="inline-flex">
                                                             <el-tooltip :content="t('tipDelete')" placement="top"
                                                                 :hide-after="0">
-                                                                <el-button class="!p-2 !rounded-none !ml-0" size="small"
+                                                                <el-button class="!p-1.5 !rounded-none !ml-0" size="small"
                                                                     type="danger" plain :icon="Delete"></el-button>
                                                             </el-tooltip>
                                                         </div>
