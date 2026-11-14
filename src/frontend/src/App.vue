@@ -4480,14 +4480,28 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             <div class="text-xs text-slate-600 dark:text-slate-300 mb-1 flex items-center gap-1">
                                 <span>{{ t('formType') }}</span>
                                 <span class="text-red-500 font-bold">*</span>
+                                <el-tooltip placement="top">
+                                    <template #content>
+                                        <div style="max-width: 340px; line-height: 1.6; white-space: pre-line;">{{ lang === 'zh'
+                                            ? '• 循环订阅：按原到期日顺延（提前续期从原到期日往后加，适合域名/服务器/会员）。\n• 到期重置：按操作当天重新计时（从点击续期当天起算下一周期，适合定期打卡/换密）。\n• 固定重复：按日历规则重复（如每周一、每月最后一天）。\n💡 仅需提醒一次：选「到期重置」，关闭「自动续期」并只保留「仅当天」规则即可。'
+                                            : '• Cycle: Extends from original due date (best for domains, VPS, memberships).\n• Reset: Resets countdown from renewal date (best for periodic tasks).\n• Repeat: Fixed calendar schedule (e.g. every Monday, last day of month).\n💡 One-time alert: Use Reset + disable Auto Renew + Today Only rule.' }}</div>
+                                    </template>
+                                    <span class="text-amber-500 cursor-help">&#9432;</span>
+                                </el-tooltip>
                             </div>
                             <div class="radio-group-fix">
-                                <div class="radio-item !text-xs" :class="{ active: form.type === 'cycle' }"
-                                    @click="form.type = 'cycle'">📅 {{ t('cycle') }}</div>
-                                <div class="radio-item !text-xs" :class="{ active: form.type === 'reset' }"
-                                    @click="form.type = 'reset'">⏳ {{ t('reset') }}</div>
-                                <div class="radio-item !text-xs" :class="{ active: form.type === 'repeat' }"
-                                    @click="form.type = 'repeat'">🔁 {{ t('typeRepeat') }}</div>
+                                <el-tooltip :content="lang === 'zh' ? '按原到期日顺延（适合域名/服务器/会员等固定账单日）' : 'Extends from original due date'" placement="bottom" :show-after="300">
+                                    <div class="radio-item !text-xs" :class="{ active: form.type === 'cycle' }"
+                                        @click="form.type = 'cycle'">📅 {{ t('cycle') }}</div>
+                                </el-tooltip>
+                                <el-tooltip :content="lang === 'zh' ? '按操作当天重新计时（一次性提醒选此项+关自动续期）' : 'Resets from today (good for one-time or periodic tasks)'" placement="bottom" :show-after="300">
+                                    <div class="radio-item !text-xs" :class="{ active: form.type === 'reset' }"
+                                        @click="form.type = 'reset'">⏳ {{ t('reset') }}</div>
+                                </el-tooltip>
+                                <el-tooltip :content="lang === 'zh' ? '按日历规则重复（如每周几、每月几号/最后一天）' : 'Calendar rule repeat (weekly/monthly/yearly)'" placement="bottom" :show-after="300">
+                                    <div class="radio-item !text-xs" :class="{ active: form.type === 'repeat' }"
+                                        @click="form.type = 'repeat'">🔁 {{ t('typeRepeat') }}</div>
+                                </el-tooltip>
                             </div>
                         </div>
 
