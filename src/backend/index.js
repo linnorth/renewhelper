@@ -1493,6 +1493,110 @@ function t(k, l, ...a) {
     return s;
 }
 
+function buildNotificationMessage(baseTitle, { dis = [], upd = [], trig = [] }, lang = "zh") {
+    const isZh = lang === "zh";
+    const unitMap = isZh
+        ? { day: "天", week: "周", month: "月", year: "年" }
+        : { day: "d", week: "w", month: "mo", year: "y" };
+    const typeMap = isZh
+        ? { cycle: "循环订阅", reset: "到期重置", repeat: "固定重复" }
+        : { cycle: "Cycle", reset: "Reset", repeat: "Repeat" };
+    const repeatFreqMap = { daily: "day", weekly: "week", monthly: "month", yearly: "year" };
+
+    const getStatusStr = (daysLeft) => (
+        daysLeft === 0
+            ? t("today", lang)
+            : daysLeft < 0
+                ? t("overdue", lang, Math.abs(daysLeft))
+                : t("left", lang, daysLeft)
+    );
+
+    const getTypePeriodStr = (item) => {
+        const typeLabel = typeMap[item.type] || typeMap.cycle;
+        if (item.type === "repeat" && item.repeat) {
+            const freqKey = repeatFreqMap[item.repeat.freq] || "day";
+            const intv = item.repeat.interval > 1 ? item.repeat.interval : 1;
+            return `${typeLabel} (${isZh ? "周期" : "Cycle"}: ${intv} ${unitMap[freqKey] || freqKey})`;
+        }
+        if (item.intervalDays) {
+            const unitKey = item.cycleUnit || "day";
+            return `${typeLabel} (${isZh ? "周期" : "Cycle"}: ${item.intervalDays} ${unitMap[unitKey] || unitKey})`;
+        }
+        return typeLabel;
+    };
+
+    const totalCount = dis.length + upd.length + trig.length;
+    const allItems = [...trig, ...dis, ...upd];
+    const sep = isZh ? "、" : ", ";
+
+    // 标题中直接带上服务名称，折叠状态也能一眼识别
+    let msgTitle = baseTitle;
+    if (totalCount === 1) {
+        const only = allItems[0];
+        let tag = "";
+        if (trig.length === 1) tag = getStatusStr(only.daysLeft);
+        else if (dis.length === 1) tag = isZh ? "已自动禁用" : "Disabled";
+        else if (upd.length === 1) tag = isZh ? "已自动续期" : "Renewed";
+        msgTitle = `${baseTitle}：${only.name}${tag ? ` (${tag})` : ""}`;
+    } else if (totalCount > 1) {
+        const names = allItems.map(x => x.name).filter(Boolean);
+        const preview = names.slice(0, 2).join(sep) + (names.length > 2 ? (isZh ? ` 等${names.length}项` : ` +${names.length - 2}`) : "");
+        if (preview) msgTitle = `${baseTitle}：${preview}`;
+    }
+
+    // 正文第一行优先放服务名称与到期状态，兼容微信等折叠预览仅显示首行的渠道
+    let pushBody = [];
+    if (totalCount === 1) {
+        const only = allItems[0];
+        if (trig.length === 1) {
+            pushBody.push(`⚠️ ${only.name} · ${getStatusStr(only.daysLeft)} (${only.nextDueDate})`);
+            pushBody.push(`${isZh ? "类型" : "Type"}: ${getTypePeriodStr(only)}`);
+        } else if (dis.length === 1) {
+            pushBody.push(`🚫 ${only.name} · ${t("overdue", lang, Math.abs(only.daysLeft))} (${only.nextDueDate}) [${isZh ? "已自动禁用" : "Disabled"}]`);
+        } else if (upd.length === 1) {
+            pushBody.push(`🔄 ${only.name} · ${only.old} -> ${only.new} [${isZh ? "已自动续期" : "Auto Renewed"}]`);
+        }
+        const rawNote = only.message ? String(only.message).trim() : "";
+        if (rawNote) pushBody.push(`${t("note", lang)}: ${rawNote}`);
+        if (only.renewUrl) pushBody.push(`${isZh ? "续费链接" : "URL"}: ${only.renewUrl}`);
+        return { title: msgTitle, body: pushBody.join("\n").trim() };
+    }
+
+    const summaryNames = allItems.map(x => x.name).filter(Boolean);
+    if (summaryNames.length > 0) {
+        const headList = summaryNames.slice(0, 3).join(sep) + (summaryNames.length > 3 ? (isZh ? ` 等${summaryNames.length}项` : ` (${summaryNames.length})`) : "");
+        pushBody.push(`📢 ${headList}`);
+        pushBody.push("");
+    }
+
+    if (chDisLine(dis)) {
+        pushBody.push(`【${t("secDis", lang)}】`);
+        dis.forEach((x, i) =>
+            pushBody.push(`${i + 1}. ${x.name} (${t("overdue", lang, Math.abs(x.daysLeft))} / ${x.nextDueDate})${x.note || ""}`)
+        );
+        pushBody.push("");
+    }
+    if (chDisLine(upd)) {
+        pushBody.push(`【${t("secRen", lang)}】`);
+        upd.forEach((x, i) =>
+            pushBody.push(`${i + 1}. ${x.name}: ${x.old} -> ${x.new}${x.note || ""}`)
+        );
+        pushBody.push("");
+    }
+    if (chDisLine(trig)) {
+        pushBody.push(`【${t("secAle", lang)}】`);
+        trig.forEach((x, i) => {
+            pushBody.push(`${i + 1}. ${x.name}: ${getStatusStr(x.daysLeft)} (${x.nextDueDate})${x.note || ""}`);
+        });
+    }
+
+    return { title: msgTitle, body: pushBody.join("\n").trim() };
+
+    function chDisLine(arr) {
+        return Array.isArray(arr) && arr.length > 0;
+    }
+}
+
 async function checkAndRenew(env, isSched, lang = "zh") {
     // 使用 getItemsPackage 获取带版本的数据
     const [conf, pkg] = await Promise.all([
@@ -1663,6 +1767,8 @@ async function checkAndRenew(env, isSched, lang = "zh") {
                 old: oldLastRenew,
                 new: todayStr,
                 note: msg,
+                message: it.message,
+                renewUrl: it.renewUrl,
                 notifyChannelIds: it.notifyChannelIds
             });
             items[i] = it;
@@ -1766,35 +1872,16 @@ async function checkAndRenew(env, isSched, lang = "zh") {
                     continue;
                 }
 
-                // Build Body for this channel
-                let pushBody = [];
-                if (chDis.length) {
-                    pushBody.push(`【${t("secDis", lang)}】`);
-                    chDis.forEach((x, i) =>
-                        pushBody.push(`${i + 1}. ${x.name} (${t("overdue", lang, Math.abs(x.daysLeft))} / ${x.nextDueDate})\n${x.note}`)
-                    );
-                    pushBody.push("");
-                }
-                if (chUpd.length) {
-                    pushBody.push(`【${t("secRen", lang)}】`);
-                    chUpd.forEach((x, i) =>
-                        pushBody.push(`${i + 1}. ${x.name}: ${x.old} -> ${x.new}\n${x.note}`)
-                    );
-                    pushBody.push("");
-                }
-                if (chTrig.length) {
-                    pushBody.push(`【${t("secAle", lang)}】`);
-                    chTrig.forEach((x, i) => {
-                        const dayStr = x.daysLeft === 0 ? t("today", lang) : (x.daysLeft < 0 ? t("overdue", lang, Math.abs(x.daysLeft)) : t("left", lang, x.daysLeft));
-                        pushBody.push(`${i + 1}. ${x.name}: ${dayStr} (${x.nextDueDate})\n${x.note}`);
-                    });
-                }
-
-                const fullBody = pushBody.join("\n").trim();
+                // Build Title & Body for this channel (title + first line highlight service name)
+                const { title: msgTitle, body: fullBody } = buildNotificationMessage(
+                    title,
+                    { dis: chDis, upd: chUpd, trig: chTrig },
+                    lang
+                );
 
                 // Dispatch to single channel
                 pushTasks.push(
-                    Notifier.dispatch([ch], title, fullBody)
+                    Notifier.dispatch([ch], msgTitle, fullBody)
                         .then(res => `[${ch.name}]: ${res}`)
                 );
             }
@@ -2193,8 +2280,7 @@ app.post(
             }
 
             const st = calculateStatus(targetItem, settings.timezone);
-            const title = settings.notifyTitle || t("pushTitle", lang);
-            const msg = st.message ? ` (${t("note", lang)}: ${st.message})` : "";
+            const baseTitle = settings.notifyTitle || t("pushTitle", lang);
             const dayStr =
                 st.daysLeft === 0
                     ? t("today", lang)
@@ -2202,12 +2288,11 @@ app.post(
                         ? t("overdue", lang, Math.abs(st.daysLeft))
                         : t("left", lang, st.daysLeft);
 
-            const pushBody = [
-                `【${t("secAle", lang)}】`,
-                `1. ${st.name}: ${dayStr} (${st.nextDueDate})\n${msg}`,
-            ]
-                .join("\n")
-                .trim();
+            const { title, body: pushBody } = buildNotificationMessage(
+                baseTitle,
+                { trig: [st] },
+                lang
+            );
 
             const res = await Notifier.dispatch(targetChannels, title, pushBody);
 
