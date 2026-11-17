@@ -4785,7 +4785,18 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                             </span>
                         </div>
                         <div v-if="form.autoRenew" class="flex items-center gap-2">
-                            <span class="text-xs text-slate-500 dark:text-slate-400">{{ t('policyRenewDay') }}:</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                <span>{{ t('policyRenewDay') }}</span>
+                                <el-tooltip placement="top">
+                                    <template #content>
+                                        <div style="max-width: 300px; line-height: 1.5;">{{ lang === 'zh'
+                                            ? '到期后宽限几天再自动续期（默认 3 天）。例如设为 3，则过期满 3 天仍未手动处理时自动延续下一周期；设为 0 则到期/过期时立即自动续期。'
+                                            : 'Grace days after due date before auto-renewing (default 3). Set 0 to renew immediately upon expiry.' }}</div>
+                                    </template>
+                                    <span class="text-amber-500 cursor-help">&#9432;</span>
+                                </el-tooltip>
+                                <span>:</span>
+                            </span>
                             <el-input-number v-model="form.autoRenewDays" size="small" :min="0" controls-position="right" style="width: 86px"></el-input-number>
                             <span class="text-xs text-slate-500 dark:text-slate-400">{{ lang === 'zh' ? '天' : 'd' }}</span>
                         </div>

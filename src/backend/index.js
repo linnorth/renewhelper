@@ -1048,11 +1048,18 @@ const Notifier = {
                 ? raw
                 : `https://www.notifyx.cn/api/v1/send/${raw}`;
             let description = "Alert";
+            let safeTitle = String(title || "RenewHelper").trim();
+            if (safeTitle.length > 20) {
+                safeTitle = safeTitle.replace(/^[^：:]+[：:]\s*/, "");
+            }
+            if (safeTitle.length > 20) {
+                safeTitle = safeTitle.slice(0, 19) + "…";
+            }
             const content = body.replace(/\n/g, "\n\n");
             const sendReq = () => fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content, description }),
+                body: JSON.stringify({ title: safeTitle, content, description }),
             });
             let r = await sendReq();
             if (r.status === 429) {
