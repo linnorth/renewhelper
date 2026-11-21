@@ -1662,7 +1662,7 @@ async function checkAndRenew(env, isSched, lang = "zh") {
         const msg = it.message ? ` (${t("note", lang)}: ${it.message})` : "";
 
         const iAutoRenew = it.autoRenew !== false;
-        const iRenewDays = typeof it.autoRenewDays === "number" ? it.autoRenewDays : 3;
+        const iRenewDays = typeof it.autoRenewDays === "number" ? it.autoRenewDays : 0;
         const hasExplicitRules = Array.isArray(it.notifyRules) && it.notifyRules.length > 0;
         const iNotifyDaysList = Array.isArray(st.notifyDaysList)
             ? st.notifyDaysList

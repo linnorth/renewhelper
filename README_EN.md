@@ -452,22 +452,6 @@ If you are upgrading from v1.x to v3.x, the data structure is backward compatibl
 
 If you find bugs or have feature suggestions, feel free to submit an Issue or Pull Request.
 
-### 💖 Donation
-
-If RenewHelper helps you, consider buying the author a coffee ☕️. Your support keeps the updates coming!
-
-**Crypto** - International
-
-| Crypto | Network | Address (Click to Copy) |
-| :--- | :--- | :--- |
-| **USDT** | **BSC (BEP20)** / Polygon / ETH | `0x0de4d19673cbdf954cfb83c0a48abb5ce8f6bf58` |
-
-> ⚠️ Warning：Support USDT on BSC (BEP20), ETH or Polygon networks (Low fees).，DO NOT USE TRC20 ！！！
-
-**Aifadian** - CN Users
-
-[![爱发电](https://img.shields.io/badge/爱发电-Afdian-946ce6?style=for-the-badge&logo=github&logoColor=white)](https://afdian.com/a/lostfree)
-
 ---
 
 **License**: MIT

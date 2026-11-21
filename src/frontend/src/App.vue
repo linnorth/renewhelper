@@ -447,7 +447,7 @@ const normalizeNotifyTime = (val) => {
 const notifyTimeOptions = Array.from({ length: 48 }, (_, i) => { const h = String(Math.floor(i / 2)).padStart(2, '0'); const m = i % 2 === 0 ? '00' : '30'; return `${h}:${m}`; });
 const notifyTimeQuickPresets = ['08:00', '09:00', '12:00', '18:00', '20:00'];
 const newNotifyTimeInput = ref('');
-const form = ref({ id: '', name: '', createDate: '', lastRenewDate: '', intervalDays: 30, cycleUnit: 'day', type: 'cycle', message: '', enabled: true, tags: [], useLunar: false, notifyRules: createDefaultNotifyRules(), notifyDays: ['7', '3', '1', '0'], notifyDaysList: [7, 3, 1, 0], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 3, fixedPrice: 0, currency: 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '' });
+const form = ref({ id: '', name: '', createDate: '', lastRenewDate: '', intervalDays: 30, cycleUnit: 'day', type: 'cycle', message: '', enabled: true, tags: [], useLunar: false, notifyRules: createDefaultNotifyRules(), notifyDays: ['7', '3', '1', '0'], notifyDaysList: [7, 3, 1, 0], notifyTime: ['08:00'], autoRenew: true, autoRenewDays: 0, fixedPrice: 0, currency: 'CNY', notifyChannelIds: [], renewHistory: [], renewUrl: '' });
 
 const syncNotifyDaysFromRules = () => {
     const activeNums = extractNotifyDaysFromRules(form.value.notifyRules);
@@ -2273,7 +2273,7 @@ const openAdd = () => {
         notifyDaysList: [7, 3, 1, 0],
         notifyTime: ['08:00'],
         autoRenew: true,
-        autoRenewDays: 3,
+        autoRenewDays: 0,
         fixedPrice: 0,
         currency: settings.value.defaultCurrency || 'CNY',
         notifyChannelIds: [],
@@ -2304,7 +2304,7 @@ const editItem = (row) => {
         notifyDays: activeNums.map(String),
         notifyTime: normalizeNotifyTime(row.notifyTimes || row.notifyTime),
         autoRenew: row.autoRenew !== false,
-        autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 3),
+        autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 0),
         notifyChannelIds: (Array.isArray(row.notifyChannelIds) ? [...row.notifyChannelIds] : []),
         repeat: rObj
     };
@@ -2340,7 +2340,7 @@ const cloneItem = (row) => {
         notifyDays: activeNums.map(String),
         notifyTime: normalizeNotifyTime(row.notifyTimes || row.notifyTime),
         autoRenew: row.autoRenew !== false,
-        autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 3),
+        autoRenewDays: (row.autoRenewDays !== undefined ? row.autoRenewDays : 0),
         notifyChannelIds: (Array.isArray(row.notifyChannelIds) ? [...row.notifyChannelIds] : []),
         renewHistory: [],
         repeat: rObj
@@ -4857,8 +4857,8 @@ const openLink = (url) => { if (url) window.open(url, '_blank'); };
                                 <el-tooltip placement="top">
                                     <template #content>
                                         <div style="max-width: 300px; line-height: 1.5;">{{ lang === 'zh'
-                                            ? '到期后宽限几天再自动续期（默认 3 天）。例如设为 3，则过期满 3 天仍未手动处理时自动延续下一周期；设为 0 则到期/过期时立即自动续期。'
-                                            : 'Grace days after due date before auto-renewing (default 3). Set 0 to renew immediately upon expiry.' }}</div>
+                                            ? '到期后宽限几天再自动续期（默认 0 天）。设为 0 则到期/过期当天立即自动续期；例如设为 3，则过期满 3 天仍未手动处理时自动延续下一周期。'
+                                            : 'Grace days after due date before auto-renewing (default 0). Set 0 to renew immediately on expiry; e.g. 3 waits 3 overdue days.' }}</div>
                                     </template>
                                     <span class="text-amber-500 cursor-help">&#9432;</span>
                                 </el-tooltip>

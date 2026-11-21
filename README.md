@@ -453,22 +453,6 @@ curl -H "X-Backup-Key: YourSecretKey123" https://your-worker.dev/api/backup > ba
 
 如果您发现了 Bug 或有新功能建议，欢迎提交 Issue 或 Pull Request。
 
-### 💖 捐赠 (Donation)
-
-如果您觉得 RenewHelper 对您有帮助，欢迎请作者喝一杯咖啡 ☕️。您的支持是我持续更新的动力！
-
-**加密货币** - 国际用户
-
-| 币种 | 网络 (Network) | 地址 (Click to Copy) |
-| :--- | :--- | :--- |
-| **USDT** | **BSC (BEP20)** / Polygon / ETH | `0x0de4d19673cbdf954cfb83c0a48abb5ce8f6bf58` |
-
-> ⚠️ 注意：此地址仅支持 EVM 兼容链 (以太坊/币安链/Polygon等)，请不要充值 TRC20 (波场) 资产！！！
-
-**爱发电** - 国内用户
-
-[![爱发电](https://img.shields.io/badge/爱发电-Afdian-946ce6?style=for-the-badge&logo=github&logoColor=white)](https://afdian.com/a/lostfree)
-
 ---
 
 **License**: MIT
